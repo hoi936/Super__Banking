@@ -209,6 +209,11 @@
             <div class="roadmap-name">Transfer Engine & Integrity</div>
             <div class="roadmap-status">COMPLETED ✅</div>
           </div>
+          <div class="roadmap-card completed">
+            <div class="roadmap-badge">Milestone 6</div>
+            <div class="roadmap-name">Bill Payment & Notifications</div>
+            <div class="roadmap-status">COMPLETED ✅</div>
+          </div>
         </div>
       </section>
     </main>

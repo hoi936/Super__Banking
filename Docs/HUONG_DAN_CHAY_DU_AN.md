@@ -166,7 +166,24 @@ Truy cập [http://localhost:8080/swagger](http://localhost:8080/swagger).
   4. Bấm **Execute** $\rightarrow$ Trả về `201 Created` kèm mã tham chiếu `TRF...`.
   5. Gọi lại `GET /api/v1/accounts` $\rightarrow$ Số dư giảm đúng 500.000đ (còn 24.500.000đ).
   6. Gửi lại cùng request chuyển tiền trên với cùng key `KEY-001` $\rightarrow$ Trả về biên lai cũ mà không bị trừ tiền lần 2 (Chống trùng lặp).
-- **Xem lịch sử giao dịch**: Gọi `GET /api/v1/transactions` $\rightarrow$ Trả về bản ghi giao dịch biến động số dư.
+- **Thanh toán Hóa đơn (Milestone 6)**:
+  1. Gọi `GET /api/v1/bills` $\rightarrow$ Thấy hóa đơn điện `ELEC-2026-0001` (850.000đ, `UNPAID`).
+  2. Mở endpoint `POST /api/v1/payments`.
+  3. Header `Idempotency-Key`: nhập `KEY-PAY-001`.
+  4. Request Body:
+     ```json
+     {
+       "billId": "<id_hoa_don_ELEC-2026-0001>",
+       "accountId": "<id_tai_khoan_1000000001>"
+     }
+     ```
+  5. Bấm **Execute** $\rightarrow$ Trả về `201 Created` kèm mã tham chiếu `PAY...`.
+  6. Gọi lại `GET /api/v1/accounts` $\rightarrow$ Số dư giảm đúng 850.000đ (từ 25.000.000đ xuống 24.150.000đ).
+  7. Gọi lại `GET /api/v1/bills` $\rightarrow$ Trạng thái hóa đơn chuyển sang `PAID`.
+  8. Gửi lại request thanh toán trên với cùng key `KEY-PAY-001` $\rightarrow$ Trả về biên lai cũ mà không bị trừ tiền lần 2.
+  9. Gọi `GET /api/v1/notifications` $\rightarrow$ Xuất hiện thông báo *"Thanh toán thành công"*.
+  10. Gọi `PATCH /api/v1/notifications/{id}/read` $\rightarrow$ Đánh dấu đã đọc thông báo.
+- **Xem lịch sử giao dịch**: Gọi `GET /api/v1/transactions` $\rightarrow$ Trả về cả các giao dịch `TRANSFER` và `PAYMENT`.
 
 ---
 
@@ -225,7 +242,7 @@ dotnet dotnet-ef database update --project src/LocalLink.Infrastructure --startu
 
 ## 🛡️ 9. Chạy Bộ Kiểm thử Tự động (Automated Unit Tests)
 
-Dự án có sẵn bộ Unit Test đầy đủ cho Authentication, RBAC, Customer Profile, Bank Accounts, Beneficiaries, Transfers, Concurrency & Transactions:
+Dự án có sẵn bộ Unit Test đầy đủ cho Authentication, RBAC, Customer Profile, Bank Accounts, Beneficiaries, Transfers, Concurrency, Transactions, Bills, Payments & Notifications:
 
 ```powershell
 dotnet test backend/LocalLink.sln
@@ -233,7 +250,7 @@ dotnet test backend/LocalLink.sln
 
 Kết quả mong đợi:
 ```text
-Passed!  - Failed: 0, Passed: 45, Skipped: 0, Total: 45
+Passed!  - Failed: 0, Passed: 61, Skipped: 0, Total: 61
 ```
 
 ---

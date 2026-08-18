@@ -219,6 +219,68 @@ public static class DatabaseSeeder
         }
 
         await context.SaveChangesAsync();
+
+        // 5. Seed Demo Bills
+        var cus1 = await context.Customers.FirstOrDefaultAsync(c => c.CustomerCode == "CUS000001");
+        if (cus1 != null)
+        {
+            if (!await context.Bills.AnyAsync(b => b.BillNumber == "ELEC-2026-0001"))
+            {
+                context.Bills.Add(new Bill
+                {
+                    Id = Guid.NewGuid(),
+                    CustomerId = cus1.Id,
+                    ProviderName = "Da Nang Electricity",
+                    BillType = BillType.Electricity,
+                    BillNumber = "ELEC-2026-0001",
+                    Amount = 850000.00m,
+                    DueDate = new DateOnly(2026, 8, 30),
+                    Status = BillStatus.Unpaid,
+                    CreatedAtUtc = DateTime.UtcNow
+                });
+                logger.LogInformation("Seeded demo bill ELEC-2026-0001 for Customer 1 (850,000 VND)");
+            }
+
+            if (!await context.Bills.AnyAsync(b => b.BillNumber == "WATER-2026-0001"))
+            {
+                context.Bills.Add(new Bill
+                {
+                    Id = Guid.NewGuid(),
+                    CustomerId = cus1.Id,
+                    ProviderName = "Da Nang Water",
+                    BillType = BillType.Water,
+                    BillNumber = "WATER-2026-0001",
+                    Amount = 220000.00m,
+                    DueDate = new DateOnly(2026, 8, 30),
+                    Status = BillStatus.Unpaid,
+                    CreatedAtUtc = DateTime.UtcNow
+                });
+                logger.LogInformation("Seeded demo bill WATER-2026-0001 for Customer 1 (220,000 VND)");
+            }
+        }
+
+        var cus2 = await context.Customers.FirstOrDefaultAsync(c => c.CustomerCode == "CUS000002");
+        if (cus2 != null)
+        {
+            if (!await context.Bills.AnyAsync(b => b.BillNumber == "NET-2026-0002"))
+            {
+                context.Bills.Add(new Bill
+                {
+                    Id = Guid.NewGuid(),
+                    CustomerId = cus2.Id,
+                    ProviderName = "VNPT Internet",
+                    BillType = BillType.Internet,
+                    BillNumber = "NET-2026-0002",
+                    Amount = 350000.00m,
+                    DueDate = new DateOnly(2026, 8, 30),
+                    Status = BillStatus.Unpaid,
+                    CreatedAtUtc = DateTime.UtcNow
+                });
+                logger.LogInformation("Seeded demo bill NET-2026-0002 for Customer 2 (350,000 VND)");
+            }
+        }
+
+        await context.SaveChangesAsync();
         logger.LogInformation("Database seeding completed successfully.");
     }
 }
