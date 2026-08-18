@@ -149,10 +149,24 @@ Truy cập [http://localhost:8080/swagger](http://localhost:8080/swagger).
 4. Bấm **Authorize** $\rightarrow$ **Close**.
 
 ### Bước 4: Kiểm tra các Endpoint có bảo vệ
-- **Xem thông tin cá nhân**: Gọi `GET /api/v1/auth/me` $\rightarrow$ Bấm **Execute** $\rightarrow$ Trả về thông tin khách hàng `Nguyen Van An` và role `CUSTOMER`.
-- **Test RBAC Khách hàng**: Gọi `GET /api/v1/auth/test/customer` $\rightarrow$ Trả về `200 OK`.
-- **Test chặn quyền Admin**: Gọi `GET /api/v1/auth/test/admin` $\rightarrow$ Bị chặn với mã `403 Forbidden` (do token thuộc role CUSTOMER).
-- **Test xoay vòng Token (Refresh)**: Gọi `POST /api/v1/auth/refresh` với `refreshToken` $\rightarrow$ Trả về cặp token mới và tự động hủy token cũ.
+- **Xem thông tin cá nhân**: Gọi `GET /api/v1/auth/me` $\rightarrow$ Trả về thông tin khách hàng `Nguyen Van An` và role `CUSTOMER`.
+- **Xem danh sách tài khoản**: Gọi `GET /api/v1/accounts` $\rightarrow$ Trả về tài khoản `1000000001` (Số dư ban đầu: 25.000.000đ).
+- **Thực hiện Chuyển tiền**:
+  1. Mở endpoint `POST /api/v1/transfers`.
+  2. Header `Idempotency-Key`: nhập `KEY-001` (hoặc UUID bất kỳ).
+  3. Request Body:
+     ```json
+     {
+       "sourceAccountId": "<id_tai_khoan_1000000001>",
+       "destinationAccountNumber": "1000000002",
+       "amount": 500000,
+       "description": "Chuyen tien thu nghiem M5"
+     }
+     ```
+  4. Bấm **Execute** $\rightarrow$ Trả về `201 Created` kèm mã tham chiếu `TRF...`.
+  5. Gọi lại `GET /api/v1/accounts` $\rightarrow$ Số dư giảm đúng 500.000đ (còn 24.500.000đ).
+  6. Gửi lại cùng request chuyển tiền trên với cùng key `KEY-001` $\rightarrow$ Trả về biên lai cũ mà không bị trừ tiền lần 2 (Chống trùng lặp).
+- **Xem lịch sử giao dịch**: Gọi `GET /api/v1/transactions` $\rightarrow$ Trả về bản ghi giao dịch biến động số dư.
 
 ---
 
@@ -211,7 +225,7 @@ dotnet dotnet-ef database update --project src/LocalLink.Infrastructure --startu
 
 ## 🛡️ 9. Chạy Bộ Kiểm thử Tự động (Automated Unit Tests)
 
-Dự án có sẵn bộ Unit Test đầy đủ cho Authentication, Password Hashing, JWT, Token Rotation và RBAC:
+Dự án có sẵn bộ Unit Test đầy đủ cho Authentication, RBAC, Customer Profile, Bank Accounts, Beneficiaries, Transfers, Concurrency & Transactions:
 
 ```powershell
 dotnet test backend/LocalLink.sln
@@ -219,7 +233,7 @@ dotnet test backend/LocalLink.sln
 
 Kết quả mong đợi:
 ```text
-Passed!  - Failed: 0, Passed: 14, Skipped: 0, Total: 14
+Passed!  - Failed: 0, Passed: 45, Skipped: 0, Total: 45
 ```
 
 ---

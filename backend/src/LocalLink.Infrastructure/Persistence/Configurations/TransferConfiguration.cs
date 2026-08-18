@@ -34,6 +34,14 @@ public class TransferConfiguration : IEntityTypeConfiguration<Transfer>
         builder.Property(tr => tr.Description)
             .HasMaxLength(500);
 
+        builder.Property(tr => tr.IdempotencyKey)
+            .HasMaxLength(100)
+            .IsUnicode(false);
+
+        builder.HasIndex(tr => tr.IdempotencyKey)
+            .IsUnique()
+            .HasFilter("[IdempotencyKey] IS NOT NULL");
+
         builder.Property(tr => tr.Status)
             .IsRequired()
             .HasConversion<string>()

@@ -83,4 +83,6 @@ Tất cả các API danh sách có phân trang (như danh sách khách hàng c�
 | **Customer Profile** | [customers.md](customers.md) | Xem hồ sơ chính mình, cập nhật thông tin cá nhân |
 | **Bank Accounts** | [accounts.md](accounts.md) | Xem danh sách tài khoản, chi tiết tài khoản, tra cứu số tài khoản |
 | **Beneficiaries** | [beneficiaries.md](beneficiaries.md) | Danh bạ người thụ hưởng (xem, thêm, xóa) |
+| **Transfers (Chuyển tiền)** | [transfers.md](transfers.md) | Chuyển tiền nội bộ, bảo toàn dòng tiền, Idempotency-Key, lịch sử chuyển tiền |
+| **Transactions (Sổ cái)** | [transactions.md](transactions.md) | Sổ cái giao dịch, biến động số dư các tài khoản |
 | **Staff & Admin Management** | [admin.md](admin.md) | Quản trị khách hàng, khóa/mở khóa tài khoản & khách hàng |

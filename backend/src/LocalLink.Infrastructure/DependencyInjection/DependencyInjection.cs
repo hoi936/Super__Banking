@@ -2,6 +2,8 @@ using LocalLink.Application.Accounts.Interfaces;
 using LocalLink.Application.Auth.Interfaces;
 using LocalLink.Application.Beneficiaries.Interfaces;
 using LocalLink.Application.Customers.Interfaces;
+using LocalLink.Application.Transactions.Interfaces;
+using LocalLink.Application.Transfers.Interfaces;
 using LocalLink.Infrastructure.Authentication;
 using LocalLink.Infrastructure.Persistence;
 using LocalLink.Infrastructure.Services;
@@ -45,6 +47,10 @@ public static class DependencyInjection
         services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<IAdminAccountService, AdminAccountService>();
         services.AddScoped<IBeneficiaryService, BeneficiaryService>();
+
+        // Transfer & Transaction Services
+        services.AddScoped<ITransferService, TransferService>();
+        services.AddScoped<ITransactionService, TransactionService>();
 
         return services;
     }

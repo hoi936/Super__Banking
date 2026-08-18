@@ -322,6 +322,16 @@ Returns system status along with the health of each registered dependency:
 | `POST` | `/api/v1/beneficiaries` | `CUSTOMER` | Add beneficiary (blocks closed accounts, own account, and duplicates) |
 | `DELETE` | `/api/v1/beneficiaries/{id}` | `CUSTOMER` | Delete saved beneficiary (Ownership enforced) |
 
+### Transfer & Transaction Endpoints
+
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/v1/transfers` | `CUSTOMER` | Execute internal transfer (Atomic ACID transaction, `Idempotency-Key` header support) |
+| `GET` | `/api/v1/transfers` | `CUSTOMER` | List transfer history for current customer (SQL-level pagination & date filtering) |
+| `GET` | `/api/v1/transfers/{id}` | `CUSTOMER` | View transfer receipt detail (Ownership strictly enforced) |
+| `GET` | `/api/v1/transactions` | `CUSTOMER` | List transaction ledger records (debits/credits) for own accounts |
+| `GET` | `/api/v1/transactions/{id}` | `CUSTOMER` | View transaction ledger record detail (Ownership strictly enforced) |
+
 ### Staff & Admin Management Endpoints
 
 | Method | Endpoint | Access | Description |
@@ -331,6 +341,36 @@ Returns system status along with the health of each registered dependency:
 | `GET` | `/api/v1/admin/customers/{id}/accounts` | `STAFF`, `ADMIN` | Read-only list of bank accounts for a specific customer |
 | `PATCH` | `/api/v1/admin/customers/{id}/status` | `ADMIN` | Change customer status (`ACTIVE` $\leftrightarrow$ `SUSPENDED`) + creates `AuditLog` |
 | `PATCH` | `/api/v1/admin/accounts/{id}/status` | `ADMIN` | Change account status (`ACTIVE` $\leftrightarrow$ `LOCKED`) + creates `AuditLog` |
+
+---
+
+## Financial Integrity & Transfer Architecture
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Customer as Customer (Client)
+    participant API as TransfersController
+    participant Svc as TransferService
+    participant DB as SQL Server (ACID Tx)
+
+    Customer->>API: POST /api/v1/transfers (Idempotency-Key, amount, dest)
+    API->>Svc: TransferAsync(request, key, userId)
+    Svc->>DB: Check IdempotencyKey (Return cached receipt if duplicate)
+    Svc->>DB: Validate Source ownership, Active status & Balance >= Amount
+    Svc->>DB: Validate Destination account Active & exists
+    Note over Svc,DB: Begin Atomic Database Transaction
+    Svc->>DB: Debit Source Account (Balance -= Amount, RowVersion)
+    Svc->>DB: Credit Destination Account (Balance += Amount, RowVersion)
+    Svc->>DB: Insert Transaction Ledger record (TRF reference)
+    Svc->>DB: Insert Transfer record (with IdempotencyKey)
+    Svc->>DB: Insert AuditLog (TRANSFER_COMPLETED)
+    Svc->>DB: Insert Notifications (Sender & Receiver)
+    Svc->>DB: CommitAsync()
+    DB-->>Svc: Transaction Committed
+    Svc-->>API: TransferReceiptDto
+    API-->>Customer: 201 Created (Receipt)
+```
 
 ---
 
@@ -346,6 +386,11 @@ Returns system status along with the health of each registered dependency:
 | `GET /api/v1/beneficiaries` | ✅ | ❌ | ❌ |
 | `POST /api/v1/beneficiaries` | ✅ | ❌ | ❌ |
 | `DELETE /api/v1/beneficiaries/{id}` | ✅ | ❌ | ❌ |
+| `POST /api/v1/transfers` | ✅ | ❌ | ❌ |
+| `GET /api/v1/transfers` | ✅ | ❌ | ❌ |
+| `GET /api/v1/transfers/{id}` | ✅ | ❌ | ❌ |
+| `GET /api/v1/transactions` | ✅ | ❌ | ❌ |
+| `GET /api/v1/transactions/{id}` | ✅ | ❌ | ❌ |
 | `GET /api/v1/admin/customers` | ❌ | ✅ | ✅ |
 | `GET /api/v1/admin/customers/{id}` | ❌ | ✅ | ✅ |
 | `GET /api/v1/admin/customers/{id}/accounts` | ❌ | ✅ | ✅ |
@@ -408,7 +453,7 @@ Returns technical system runtime telemetry:
 - [x] **Milestone 2**: Database Design & Core Banking Schema (13 Entities, Migrations, Seeders) ✅
 - [x] **Milestone 3**: Authentication + JWT + Refresh Token + RBAC ✅
 - [x] **Milestone 4**: Customer Management & Bank Accounts ✅
-- [ ] **Milestone 5**: Transfer Engine, Transactions & Audit Log
+- [x] **Milestone 5**: Transfer Engine, Transactions & Audit Log ✅
 - [ ] **Milestone 6**: Frontend Banking Dashboard UI
 - [ ] **Milestone 7**: Bill Payment System & Notifications
 - [ ] **Milestone 8**: Comprehensive Integration & Docker Testing
