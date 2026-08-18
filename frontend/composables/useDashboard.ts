@@ -42,8 +42,8 @@ export function useDashboard() {
       const [profileResult, accountsResult, transactionsResult, billsResult] = await Promise.allSettled([
         customerService.getProfile(),
         accountService.getAccounts(),
-        transactionService.getTransactions(1, 5),
-        billService.getBills(1, 10, 'Unpaid')
+        transactionService.getTransactions({ page: 1, pageSize: 5 }),
+        billService.getBills({ page: 1, pageSize: 10, status: 'UNPAID' })
       ])
 
       if (profileResult.status === 'fulfilled') {

@@ -111,7 +111,7 @@ import { useRoute } from 'vue-router'
 const leftDrawerOpen = ref(false)
 const authStore = useAuthStore()
 const notificationService = useNotificationService()
-const unreadCount = ref(0)
+const unreadCount = useState<number>('unreadNotificationCount', () => 0)
 const route = useRoute()
 
 const toggleLeftDrawer = () => {

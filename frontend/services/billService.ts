@@ -1,18 +1,32 @@
-import type { BillListItem } from '~/types/bill'
+import type { BillListItemDto, BillDetailDto } from '~/types/bill'
 import type { PagedResult } from '~/types/api'
 import { useApiClient } from './api'
 
 export function useBillService() {
   const { $api } = useApiClient()
 
-  const getBills = async (page: number = 1, pageSize: number = 10, status?: string): Promise<PagedResult<BillListItem>> => {
-    return await $api<PagedResult<BillListItem>>('/api/v1/bills', {
+  const getBills = async (params?: {
+    page?: number
+    pageSize?: number
+    status?: string
+    type?: string
+    fromDueDate?: string
+    toDueDate?: string
+  }): Promise<PagedResult<BillListItemDto>> => {
+    return await $api<PagedResult<BillListItemDto>>('/api/v1/bills', {
       method: 'GET',
-      query: { page, pageSize, status }
+      query: params
+    })
+  }
+
+  const getBill = async (id: string): Promise<BillDetailDto> => {
+    return await $api<BillDetailDto>(`/api/v1/bills/${id}`, {
+      method: 'GET'
     })
   }
 
   return {
-    getBills
+    getBills,
+    getBill
   }
 }
