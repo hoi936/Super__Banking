@@ -36,6 +36,11 @@ services:
       Cors__AllowedOrigins__0: "http://localhost:3000"
       Cors__AllowedOrigins__1: "http://127.0.0.1:3000"
       APPLY_MIGRATIONS_AT_STARTUP: "true"
+      Jwt__Issuer: "${JWT_ISSUER:-LocalLink}"
+      Jwt__Audience: "${JWT_AUDIENCE:-LocalLink.Client}"
+      Jwt__Secret: "${JWT_SECRET:-LocalLink_Dev_Super_Secret_Key_Minimum_32_Bytes_Long_2026_Secure_Token_Key!}"
+      Jwt__AccessTokenMinutes: "${JWT_ACCESS_TOKEN_MINUTES:-15}"
+      Jwt__RefreshTokenDays: "${JWT_REFRESH_TOKEN_DAYS:-7}"
     ports:
       - "${API_PORT:-8080}:8080"
     depends_on:

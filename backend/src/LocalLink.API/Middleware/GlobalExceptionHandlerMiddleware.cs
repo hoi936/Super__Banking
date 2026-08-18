@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using LocalLink.Application.Common.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LocalLink.API.Middleware;
@@ -25,6 +26,40 @@ public class GlobalExceptionHandlerMiddleware
         try
         {
             await _next(context);
+        }
+        catch (UnauthorizedException ex)
+        {
+            _logger.LogWarning("Unauthorized access attempt: {Message}", ex.Message);
+
+            context.Response.ContentType = "application/problem+json";
+            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+
+            var problemDetails = new ProblemDetails
+            {
+                Status = (int)HttpStatusCode.Unauthorized,
+                Title = "Unauthorized",
+                Detail = ex.Message,
+                Instance = context.Request.Path
+            };
+
+            await context.Response.WriteAsync(JsonSerializer.Serialize(problemDetails));
+        }
+        catch (ForbiddenException ex)
+        {
+            _logger.LogWarning("Forbidden access attempt: {Message}", ex.Message);
+
+            context.Response.ContentType = "application/problem+json";
+            context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+
+            var problemDetails = new ProblemDetails
+            {
+                Status = (int)HttpStatusCode.Forbidden,
+                Title = "Forbidden",
+                Detail = ex.Message,
+                Instance = context.Request.Path
+            };
+
+            await context.Response.WriteAsync(JsonSerializer.Serialize(problemDetails));
         }
         catch (Exception ex)
         {

@@ -282,6 +282,36 @@ When modifying or adding domain entities:
 
 ### `/health`
 Returns system status along with the health of each registered dependency:
+## Authentication & Development Demo Credentials
+
+### Development Demo Accounts
+> [!NOTE]
+> **Development only**. Never use these demo credentials in production.
+
+| Account | Email | Password | Role | Customer Profile |
+| :--- | :--- | :--- | :--- | :--- |
+| **Admin** | `admin@locallink.local` | `LocalLink@123` | `ADMIN` | — |
+| **Customer 1** | `customer1@locallink.local` | `LocalLink@123` | `CUSTOMER` | `Nguyen Van An` (`CUS000001`) |
+| **Customer 2** | `customer2@locallink.local` | `LocalLink@123` | `CUSTOMER` | `Tran Thi Binh` (`CUS000002`) |
+
+### Auth API Endpoints
+
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/v1/auth/login` | Public | Login with email & password, returns JWT and Refresh Token |
+| `POST` | `/api/v1/auth/refresh` | Public | Rotates Refresh Token and returns new JWT access token |
+| `POST` | `/api/v1/auth/logout` | `[Authorize]` | Revokes active Refresh Token and logs audit entry |
+| `GET` | `/api/v1/auth/me` | `[Authorize]` | Returns current user profile, roles, and customer info |
+| `GET` | `/api/v1/auth/test/customer` | `[Authorize(Roles = "CUSTOMER")]` | Verification endpoint for CUSTOMER role |
+| `GET` | `/api/v1/auth/test/staff` | `[Authorize(Roles = "STAFF")]` | Verification endpoint for STAFF role |
+| `GET` | `/api/v1/auth/test/admin` | `[Authorize(Roles = "ADMIN")]` | Verification endpoint for ADMIN role |
+
+---
+
+## Health Checks & Diagnostic Endpoints
+
+### `/health`
+Returns system status along with the health of each registered dependency:
 ```json
 {
   "status": "Healthy",
@@ -330,7 +360,7 @@ Returns technical system runtime telemetry:
 
 - [x] **Milestone 1**: Project Foundation (Backend, Frontend, SQL Server 2022, Docker Compose) ✅
 - [x] **Milestone 2**: Database Design & Core Banking Schema (13 Entities, Migrations, Seeders) ✅
-- [ ] **Milestone 3**: Authentication + JWT + Refresh Token + RBAC
+- [x] **Milestone 3**: Authentication + JWT + Refresh Token + RBAC ✅
 - [ ] **Milestone 4**: Customer Management & Bank Accounts
 - [ ] **Milestone 5**: Transfer Engine, Transactions & Audit Log
 - [ ] **Milestone 6**: Frontend Banking Dashboard UI

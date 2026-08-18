@@ -38,6 +38,9 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
 
         builder.HasIndex(rt => rt.UserId);
         builder.HasIndex(rt => rt.ExpiresAtUtc);
+        builder.HasIndex(rt => rt.TokenHash)
+            .IsUnique()
+            .HasDatabaseName("UX_RefreshTokens_TokenHash");
 
         builder.HasOne(rt => rt.User)
             .WithMany(u => u.RefreshTokens)

@@ -14,6 +14,7 @@ builder.Services.AddAppCors(builder.Configuration);
 builder.Services.AddAppHealthChecks(builder.Configuration);
 builder.Services.AddAppSwagger();
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddAppAuthentication(builder.Configuration);
 
 var app = builder.Build();
 
@@ -26,6 +27,7 @@ app.UseCors(CorsExtensions.CorsPolicyName);
 
 app.UseAppHealthChecks();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
