@@ -7,38 +7,36 @@
           <q-icon name="account_balance" size="28px" color="primary" />
         </div>
         <div class="logo-text">
-          <span class="logo-title">LocalLink</span>
-          <span class="logo-badge">FOUNDATION v1.0</span>
+          <q-icon name="account_balance" size="32px" class="logo-icon" />
+          <span class="logo-title">InterLink Banking</span>
         </div>
-      </div>
-
-      <div class="header-actions">
-        <q-btn
-          flat
-          dense
-          no-caps
-          color="white"
-          icon="refresh"
-          label="Refresh Status"
-          :loading="loading"
-          @click="checkStatus"
-          class="refresh-btn"
-        />
+        <div class="header-actions">
+          <q-btn
+            unelevated
+            rounded
+            icon="refresh"
+            label="Refresh Status"
+            color="primary"
+            :loading="loading"
+            class="refresh-btn"
+            @click="refreshData"
+          />
+        </div>
       </div>
     </header>
 
-    <!-- Hero Section -->
     <main class="main-content">
-      <section class="hero-section">
-        <div class="hero-tag">
-          <span class="tag-dot"></span>
-          Cloud-native Regional Banking Architecture
+      <!-- Hero Section -->
+      <section class="hero-section text-center">
+        <div class="hero-badge">
+          <q-icon name="verified_user" size="16px" class="q-mr-xs" />
+          Production-Ready Architecture Foundation
         </div>
         <h1 class="hero-title">
-          LocalLink Platform
+          InterLink Banking Platform
         </h1>
         <p class="hero-subtitle">
-          Cloud-native Regional Banking & Local Services Platform
+          Cloud-native Connected Regional Banking & Local Services Platform
         </p>
         <p class="hero-desc">
           High-performance, modular foundation engineered with ASP.NET Core Web API, Entity Framework Core, SQL Server 2022, Nuxt 3, and Docker.
@@ -212,8 +210,8 @@
 
     <!-- Footer -->
     <footer class="footer">
-      <div>LocalLink — Cloud-native Regional Banking & Local Services Platform</div>
-      <div class="footer-sub">Enterprise-grade Clean Architecture Foundation</div>
+      <div>InterLink Banking — Cloud-native Connected Regional Banking & Local Services Platform</div>
+      <div class="q-mt-xs">Engineered with Clean Architecture, .NET 10, Nuxt 3 & Docker Orchestration</div>
     </footer>
   </div>
 </template>

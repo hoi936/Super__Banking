@@ -1,8 +1,8 @@
-# LocalLink
+# InterLink Banking
 
-**Cloud-native Regional Banking & Local Services Platform**
+**Cloud-native Connected Regional Banking & Local Services Platform**
 
-LocalLink is an enterprise-ready, cloud-native financial platform designed for regional banking and localized digital financial services. Built with a robust **Modular Monolith + Clean Architecture**, the platform provides high-throughput transaction processing, resilient data persistence, and modern reactive client experiences.
+InterLink Banking is an enterprise-ready, cloud-native financial platform designed for connected regional banking and localized digital financial services. Built with a robust **Modular Monolith + Clean Architecture**, the platform provides high-throughput transaction processing, resilient data persistence, and modern reactive client experiences.
 
 ---
 
