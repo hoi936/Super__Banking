@@ -33,7 +33,10 @@ export const useAuthStore = defineStore('auth', {
         const authService = useAuthService()
         const response = await authService.login(request)
         
-        this.user = response.user
+        this.user = {
+          ...response.user,
+          roles: response.roles || []
+        }
         this.accessToken = response.accessToken
         
         if (process.client) {

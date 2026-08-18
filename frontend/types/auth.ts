@@ -23,6 +23,7 @@ export interface TokenResponse {
 
 export interface LoginResponse {
   user: CurrentUser
+  roles: UserRole[]
   accessToken: string
   refreshToken: string
   expiresAtUtc: string
