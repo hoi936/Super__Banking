@@ -1,0 +1,8 @@
+node_modules
+.nuxt
+.output
+.nitro
+bin
+obj
+.git
+.env

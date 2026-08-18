@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/LocalLink.API/LocalLink.API.csproj" />
+    <Project Path="src/LocalLink.Application/LocalLink.Application.csproj" />
+    <Project Path="src/LocalLink.Domain/LocalLink.Domain.csproj" />
+    <Project Path="src/LocalLink.Infrastructure/LocalLink.Infrastructure.csproj" />
+    <Project Path="src/LocalLink.Shared/LocalLink.Shared.csproj" />
+  </Folder>
+</Solution>
