@@ -9,12 +9,14 @@ COPY ["src/LocalLink.Application/LocalLink.Application.csproj", "src/LocalLink.A
 COPY ["src/LocalLink.Domain/LocalLink.Domain.csproj", "src/LocalLink.Domain/"]
 COPY ["src/LocalLink.Infrastructure/LocalLink.Infrastructure.csproj", "src/LocalLink.Infrastructure/"]
 COPY ["src/LocalLink.Shared/LocalLink.Shared.csproj", "src/LocalLink.Shared/"]
+COPY ["tests/LocalLink.UnitTests/LocalLink.UnitTests.csproj", "tests/LocalLink.UnitTests/"]
 
 # Restore dependencies
 RUN dotnet restore "LocalLink.sln"
 
 # Copy full source code
 COPY src/ ./src/
+COPY tests/ ./tests/
 
 # Build and publish API project
 WORKDIR /src/src/LocalLink.API

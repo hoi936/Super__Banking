@@ -1,6 +1,8 @@
 <template>
   <div id="q-app" class="locallink-app">
-    <NuxtPage />
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
   </div>
 </template>
 

@@ -1,7 +1,18 @@
+using LocalLink.Application.Accounts.Interfaces;
+using LocalLink.Application.Auth.Interfaces;
+using LocalLink.Application.Beneficiaries.Interfaces;
+using LocalLink.Application.Bills.Interfaces;
+using LocalLink.Application.Customers.Interfaces;
+using LocalLink.Application.Notifications.Interfaces;
+using LocalLink.Application.Payments.Interfaces;
+using LocalLink.Application.Transactions.Interfaces;
+using LocalLink.Application.Transfers.Interfaces;
+using LocalLink.Infrastructure.Authentication;
+using LocalLink.Infrastructure.Persistence;
+using LocalLink.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using LocalLink.Infrastructure.Persistence;
 
 namespace LocalLink.Infrastructure.DependencyInjection;
 
@@ -24,6 +35,37 @@ public static class DependencyInjection
                 });
             }
         });
+
+        // JWT Configuration Options
+        services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+
+        // Authentication Services
+        services.AddSingleton<IPasswordHasherService, PasswordHasherService>();
+        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IAuthService, AuthService>();
+
+        // Customer & Banking Services
+        services.AddScoped<ICustomerService, CustomerService>();
+        services.AddScoped<IAdminCustomerService, AdminCustomerService>();
+        services.AddScoped<IAccountService, AccountService>();
+        services.AddScoped<IAdminAccountService, AdminAccountService>();
+        services.AddScoped<IBeneficiaryService, BeneficiaryService>();
+
+        // Transfer & Transaction Services
+        services.AddScoped<ITransferService, TransferService>();
+        services.AddScoped<ITransactionService, TransactionService>();
+
+        // Bill, Payment & Notification Services
+        services.AddScoped<IBillService, BillService>();
+        services.AddScoped<IPaymentService, PaymentService>();
+        services.AddScoped<INotificationService, NotificationService>();
+
+        // Admin Services
+        services.AddScoped<LocalLink.Application.Admin.Interfaces.IAdminDashboardService, LocalLink.Infrastructure.Services.Admin.AdminDashboardService>();
+        services.AddScoped<LocalLink.Application.Admin.Interfaces.IAdminTransactionService, LocalLink.Infrastructure.Services.Admin.AdminTransactionService>();
+        services.AddScoped<LocalLink.Application.Admin.Interfaces.IAdminPaymentService, LocalLink.Infrastructure.Services.Admin.AdminPaymentService>();
+        services.AddScoped<LocalLink.Application.Admin.Interfaces.IAdminUserService, LocalLink.Infrastructure.Services.Admin.AdminUserService>();
+        services.AddScoped<LocalLink.Application.Admin.Interfaces.IAdminAuditService, LocalLink.Infrastructure.Services.Admin.AdminAuditService>();
 
         return services;
     }

@@ -1,8 +1,8 @@
-# 🏦 LocalLink — Tổng quan Dự án & Tài liệu Nghiệp vụ
+# 🏦 InterLink Banking — Tổng quan Dự án & Tài liệu Nghiệp vụ
 
-**Tên dự án**: LocalLink  
-**Slogan**: *Cloud-native Regional Banking & Local Services Platform*  
-*(Nền tảng Ngân hàng Số Khu vực & Dịch vụ Tiện ích Địa phương trên nền tảng Điện toán đám mây)*
+**Tên dự án**: InterLink Banking  
+**Slogan**: *Cloud-native Connected Regional Banking & Local Services Platform*  
+*(Nền tảng Ngân hàng Số Liên kết Khu vực & Dịch vụ Tiện ích Địa phương trên Điện toán đám mây)*
 
 ---
 
@@ -10,7 +10,7 @@
 
 Trong kỷ nguyên số hóa ngành tài chính, các ngân hàng khu vực, ngân hàng hợp tác xã hoặc các tổ chức tín dụng địa phương thường gặp khó khăn trong việc tiếp cận các giải pháp công nghệ hiện đại do chi phí triển khai hệ thống lõi (Core Banking) quá lớn và sự phân mảnh phức tạp của các giải pháp Microservices.
 
-**LocalLink** ra đời nhằm giải quyết triệt để bài toán này:
+**InterLink Banking** ra đời nhằm giải quyết triệt để bài toán này:
 - Cung cấp một nền tảng **Ngân hàng số hiện đại, tin cậy và có tốc độ xử lý cao**.
 - Tích hợp sâu rộng giữa **Nghiệp vụ Tài chính - Ngân hàng cốt lõi** và **Hệ sinh thái Thanh toán dịch vụ công / Tiện ích đời sống tại địa phương**.
 - Áp dụng kiến trúc **Modular Monolith kết hợp Clean Architecture**, mang lại sự đơn giản trong vận hành, dễ dàng mở rộng và tối ưu chi phí hạ tầng.
@@ -117,20 +117,20 @@ Hệ thống được tổ chức theo mô hình **Modular Monolith + Clean Arch
 
 - [x] **Milestone 1: Project Foundation & DevOps** ✅ *(Đã hoàn thành)*
   - Setup .NET 10 Web API Clean Architecture, Nuxt 3 Quasar Frontend, SQL Server 2022 Docker, Docker Compose, Health Check `/health`, Swagger `/swagger`, Persistence Volume.
-- [ ] **Milestone 2: Database Design & Core Banking Schema**
+- [x] **Milestone 2: Database Design & Core Banking Schema** ✅
   - Thiết kế quan hệ bảng CSDL hoàn chỉnh: Customer, Account, Transaction, Transfer, Bill, Provider, AuditLog, User, Role.
-- [ ] **Milestone 3: Authentication + JWT + Refresh Token + RBAC**
+- [x] **Milestone 3: Authentication + JWT + Refresh Token + RBAC** ✅
   - Đăng ký, đăng nhập, cấp phát JWT, middleware kiểm tra token và phân quyền.
-- [ ] **Milestone 4: Customer Management & Banking Accounts**
+- [x] **Milestone 4: Customer Management & Banking Accounts** ✅
   - Mở tài khoản, cấp phát số tài khoản, quản lý trạng thái và truy vấn số dư.
-- [ ] **Milestone 5: Transfer Engine, Transaction Ledger & Audit Logging**
+- [x] **Milestone 5: Transfer Engine, Transaction Ledger & Audit Logging** ✅
   - Logic chuyển khoản an toàn (ACID transaction, locking), sao kê và ghi audit log tự động.
-- [ ] **Milestone 6: Frontend Banking UI**
-  - Xây dựng giao diện Web Banking đầy đủ với Quasar components (Dashboard, Chuyển tiền, Lịch sử giao dịch).
-- [ ] **Milestone 7: Bill Payment System & Notifications**
+- [x] **Milestone 6: Frontend Banking UI (M6 Backend: Bills/Notifications)** ✅
   - Tính năng thanh toán hóa đơn dịch vụ địa phương và thông báo biến động số dư.
-- [ ] **Milestone 8: Docker Testing Improvements & Stress Testing**
-  - Tối ưu hóa hiệu năng container, kịch bản test chịu tải và concurrency test.
+- [x] **Milestone 7: Staff/Admin & Backend V1 Finalization** ✅
+  - Cổng API quản trị, Audit logging, Khóa tài khoản, Finalize Backend V1.
+- [x] **Milestone 8: Frontend UI (FE1 & FE2)** ✅
+  - Xây dựng giao diện Web Banking đầy đủ với Quasar components (Auth, Dashboard, Accounts, Profile).
 - [ ] **Milestone 9: Cloud Deployment (Azure) & CI/CD Pipelines**
   - Tích hợp GitHub Actions CI/CD và chuẩn bị deploy lên Microsoft Azure Cloud.
 - [ ] **Milestone 10: Infrastructure as Code (Terraform) & Monitoring (Prometheus/Grafana)**

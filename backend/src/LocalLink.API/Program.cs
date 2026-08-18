@@ -2,34 +2,46 @@ using LocalLink.API.Extensions;
 using LocalLink.API.Middleware;
 using LocalLink.Infrastructure.DependencyInjection;
 using LocalLink.Infrastructure.Persistence;
+using LocalLink.Infrastructure.Persistence.Seeders;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 builder.Services.AddProblemDetails();
 builder.Services.AddAppCors(builder.Configuration);
 builder.Services.AddAppHealthChecks(builder.Configuration);
+builder.Services.AddAppRateLimiting();
 builder.Services.AddAppSwagger();
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddAppAuthentication(builder.Configuration);
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+app.UseMiddleware<SecurityHeadersMiddleware>();
 
 app.UseAppSwagger(app.Environment);
+
+app.UseRateLimiter();
 
 app.UseCors(CorsExtensions.CorsPolicyName);
 
 app.UseAppHealthChecks();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
-// Auto-apply migrations at startup in Container / Development environment if enabled
+// Auto-apply migrations and seed data at startup in Container / Development environment if enabled
 if (app.Environment.IsDevelopment() || Environment.GetEnvironmentVariable("APPLY_MIGRATIONS_AT_STARTUP") == "true")
 {
     using var scope = app.Services.CreateScope();
@@ -53,11 +65,14 @@ if (app.Environment.IsDevelopment() || Environment.GetEnvironmentVariable("APPLY
                 {
                     logger.LogInformation("Database is up to date. No pending migrations.");
                 }
+
+                // Run development seeder
+                await DatabaseSeeder.SeedAsync(dbContext, logger);
             }
         }
         catch (Exception ex)
         {
-            logger.LogWarning(ex, "Could not automatically apply migrations on startup (SQL Server might still be starting up).");
+            logger.LogWarning(ex, "Could not automatically apply migrations or seed data on startup.");
         }
     }
 }

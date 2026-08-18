@@ -7,41 +7,57 @@
           <q-icon name="account_balance" size="28px" color="primary" />
         </div>
         <div class="logo-text">
-          <span class="logo-title">LocalLink</span>
-          <span class="logo-badge">FOUNDATION v1.0</span>
+          <q-icon name="account_balance" size="32px" class="logo-icon" />
+          <span class="logo-title">InterLink Banking</span>
         </div>
-      </div>
-
-      <div class="header-actions">
-        <q-btn
-          flat
-          dense
-          no-caps
-          color="white"
-          icon="refresh"
-          label="Refresh Status"
-          :loading="loading"
-          @click="checkStatus"
-          class="refresh-btn"
-        />
+        <div class="header-actions flex q-gutter-sm">
+          <q-btn
+            unelevated
+            rounded
+            icon="refresh"
+            label="Refresh Status"
+            color="primary"
+            :loading="loading"
+            class="refresh-btn"
+            @click="checkStatus"
+          />
+          <q-btn
+            v-if="authStore.isAuthenticated"
+            unelevated
+            rounded
+            icon="dashboard"
+            label="Vào ứng dụng"
+            color="secondary"
+            @click="goToApp"
+          />
+          <q-btn
+            v-else
+            unelevated
+            rounded
+            icon="login"
+            label="Đăng nhập"
+            color="secondary"
+            to="/login"
+          />
+        </div>
       </div>
     </header>
 
-    <!-- Hero Section -->
     <main class="main-content">
-      <section class="hero-section">
-        <div class="hero-tag">
-          <span class="tag-dot"></span>
-          Cloud-native Regional Banking Architecture
+      <!-- Hero Section -->
+      <section class="hero-section text-center">
+        <div class="hero-badge">
+          <q-icon name="verified_user" size="16px" class="q-mr-xs" />
+          Production-Ready Architecture Foundation
         </div>
         <h1 class="hero-title">
-          LocalLink Platform
+          InterLink Banking Platform
         </h1>
         <p class="hero-subtitle">
-          Cloud-native Regional Banking & Local Services Platform
+          Cloud-native Connected Regional Banking & Local Services Platform
         </p>
         <p class="hero-desc">
-          High-performance, modular foundation engineered with ASP.NET Core Web API, Entity Framework Core, SQL Server 2022, Nuxt 3, and Docker.
+          High-performance, modular foundation engineered with ASP.NET Core Web API, Entity Framework Core, SQL Server 2022, Nuxt 4, and Docker.
         </p>
       </section>
 
@@ -113,7 +129,7 @@
           </div>
           <div class="card-body">
             <div class="service-title">Web Application</div>
-            <div class="service-meta">Nuxt 3 + Vue 3 + Quasar + TS</div>
+            <div class="service-meta">Nuxt 4 + Vue 3 + Quasar + TS</div>
             <div class="status-indicator">
               <span class="pulse-indicator online"></span>
               <span class="status-text">Client: Connected</span>
@@ -139,8 +155,8 @@
 
           <div class="telemetry-grid">
             <div class="telemetry-item">
-              <span class="telemetry-label">Application</span>
-              <span class="telemetry-value">{{ systemData?.application || 'LocalLink' }}</span>
+              <div class="telemetry-label text-caption text-grey-5">Application</div>
+              <span class="telemetry-value">{{ systemData?.application || 'InterLink Banking' }}</span>
             </div>
             <div class="telemetry-item">
               <span class="telemetry-label">Environment</span>
@@ -191,20 +207,30 @@
             <div class="roadmap-name">Foundation & DevOps</div>
             <div class="roadmap-status">COMPLETED ✅</div>
           </div>
-          <div class="roadmap-card pending">
+          <div class="roadmap-card completed">
             <div class="roadmap-badge">Milestone 2</div>
             <div class="roadmap-name">Database Schema Design</div>
-            <div class="roadmap-status">Up Next ⏳</div>
+            <div class="roadmap-status">COMPLETED ✅</div>
           </div>
-          <div class="roadmap-card pending">
+          <div class="roadmap-card completed">
             <div class="roadmap-badge">Milestone 3</div>
             <div class="roadmap-name">Auth + JWT + RBAC</div>
-            <div class="roadmap-status">Planned ⏳</div>
+            <div class="roadmap-status">COMPLETED ✅</div>
           </div>
-          <div class="roadmap-card pending">
+          <div class="roadmap-card completed">
             <div class="roadmap-badge">Milestone 4</div>
             <div class="roadmap-name">Customer & Banking Accounts</div>
-            <div class="roadmap-status">Planned ⏳</div>
+            <div class="roadmap-status">COMPLETED ✅</div>
+          </div>
+          <div class="roadmap-card completed">
+            <div class="roadmap-badge">Milestone 5</div>
+            <div class="roadmap-name">Transfer Engine & Integrity</div>
+            <div class="roadmap-status">COMPLETED ✅</div>
+          </div>
+          <div class="roadmap-card completed">
+            <div class="roadmap-badge">Milestone 6</div>
+            <div class="roadmap-name">Bill Payment & Notifications</div>
+            <div class="roadmap-status">COMPLETED ✅</div>
           </div>
         </div>
       </section>
@@ -212,18 +238,30 @@
 
     <!-- Footer -->
     <footer class="footer">
-      <div>LocalLink — Cloud-native Regional Banking & Local Services Platform</div>
-      <div class="footer-sub">Enterprise-grade Clean Architecture Foundation</div>
+      <div>InterLink Banking — Cloud-native Connected Regional Banking & Local Services Platform</div>
+      <div class="q-mt-xs">Engineered with Clean Architecture, .NET 10, Nuxt 4 & Docker Orchestration</div>
     </footer>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useApiClient } from '~/services/api'
+import { useAuthStore } from '~/stores/auth'
 import type { SystemStatus, HealthCheckResponse } from '~/types'
 
+const router = useRouter()
+const authStore = useAuthStore()
 const { baseUrl: apiBaseUrl, getSystemStatus, getHealthCheck } = useApiClient()
+
+const goToApp = () => {
+  if (authStore.hasRole('ADMIN') || authStore.hasRole('STAFF')) {
+    router.push('/admin')
+  } else {
+    router.push('/dashboard')
+  }
+}
 
 const loading = ref(false)
 const systemData = ref<SystemStatus | null>(null)
