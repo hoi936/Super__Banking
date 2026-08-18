@@ -1,7 +1,9 @@
+using LocalLink.Application.Auth.Interfaces;
+using LocalLink.Infrastructure.Authentication;
+using LocalLink.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using LocalLink.Infrastructure.Persistence;
 
 namespace LocalLink.Infrastructure.DependencyInjection;
 
@@ -24,6 +26,14 @@ public static class DependencyInjection
                 });
             }
         });
+
+        // JWT Configuration Options
+        services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+
+        // Authentication Services
+        services.AddSingleton<IPasswordHasherService, PasswordHasherService>();
+        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IAuthService, AuthService>();
 
         return services;
     }

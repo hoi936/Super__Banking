@@ -1,5 +1,6 @@
 using LocalLink.Domain.Entities;
 using LocalLink.Domain.Enums;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -7,12 +8,13 @@ namespace LocalLink.Infrastructure.Persistence.Seeders;
 
 public static class DatabaseSeeder
 {
-    // Development placeholder hash (not plain text, temporary for M2 schema seeding before M3 Auth)
-    private const string DevPasswordHashPlaceholder = "$2a$11$DevelopmentSeedPlaceholderHashDoNotUseInProduction1234567890.";
+    // Development-only demo credentials (never use in production)
+    public const string DevDemoPassword = "LocalLink@123";
 
     public static async Task SeedAsync(ApplicationDbContext context, ILogger logger)
     {
         logger.LogInformation("Starting database seeding for development environment...");
+        var passwordHasher = new PasswordHasher<User>();
 
         // 1. Seed Roles
         var rolesToSeed = new[]
@@ -60,10 +62,10 @@ public static class DatabaseSeeder
             {
                 Id = Guid.NewGuid(),
                 Email = adminEmail,
-                PasswordHash = DevPasswordHashPlaceholder,
                 Status = UserStatus.Active,
                 CreatedAtUtc = DateTime.UtcNow
             };
+            adminUser.PasswordHash = passwordHasher.HashPassword(adminUser, DevDemoPassword);
 
             adminUser.UserRoles.Add(new UserRole
             {
@@ -74,6 +76,12 @@ public static class DatabaseSeeder
 
             context.Users.Add(adminUser);
             logger.LogInformation("Seeded admin user: {AdminEmail}", adminEmail);
+        }
+        else if (passwordHasher.VerifyHashedPassword(existingAdmin, existingAdmin.PasswordHash, DevDemoPassword) == PasswordVerificationResult.Failed)
+        {
+            // Ensure demo hash is updated to real standard ASP.NET Core hash
+            existingAdmin.PasswordHash = passwordHasher.HashPassword(existingAdmin, DevDemoPassword);
+            logger.LogInformation("Updated password hash for admin user: {AdminEmail}", adminEmail);
         }
 
         // 3. Seed Customer 1: Nguyen Van An
@@ -91,10 +99,10 @@ public static class DatabaseSeeder
             {
                 Id = Guid.NewGuid(),
                 Email = cus1Email,
-                PasswordHash = DevPasswordHashPlaceholder,
                 Status = UserStatus.Active,
                 CreatedAtUtc = DateTime.UtcNow
             };
+            user1.PasswordHash = passwordHasher.HashPassword(user1, DevDemoPassword);
 
             user1.UserRoles.Add(new UserRole
             {
@@ -137,6 +145,11 @@ public static class DatabaseSeeder
             logger.LogInformation("Seeded customer 1: {FullName} ({Email}) with account {AccountNumber} (Balance: 25,000,000 VND)", 
                 customer1.FullName, user1.Email, account1.AccountNumber);
         }
+        else if (passwordHasher.VerifyHashedPassword(existingUser1, existingUser1.PasswordHash, DevDemoPassword) == PasswordVerificationResult.Failed)
+        {
+            existingUser1.PasswordHash = passwordHasher.HashPassword(existingUser1, DevDemoPassword);
+            logger.LogInformation("Updated password hash for customer 1: {Email}", cus1Email);
+        }
 
         // 4. Seed Customer 2: Tran Thi Binh
         var cus2Email = "customer2@locallink.local";
@@ -153,10 +166,10 @@ public static class DatabaseSeeder
             {
                 Id = Guid.NewGuid(),
                 Email = cus2Email,
-                PasswordHash = DevPasswordHashPlaceholder,
                 Status = UserStatus.Active,
                 CreatedAtUtc = DateTime.UtcNow
             };
+            user2.PasswordHash = passwordHasher.HashPassword(user2, DevDemoPassword);
 
             user2.UserRoles.Add(new UserRole
             {
@@ -198,6 +211,11 @@ public static class DatabaseSeeder
             context.Users.Add(user2);
             logger.LogInformation("Seeded customer 2: {FullName} ({Email}) with account {AccountNumber} (Balance: 15,000,000 VND)", 
                 customer2.FullName, user2.Email, account2.AccountNumber);
+        }
+        else if (passwordHasher.VerifyHashedPassword(existingUser2, existingUser2.PasswordHash, DevDemoPassword) == PasswordVerificationResult.Failed)
+        {
+            existingUser2.PasswordHash = passwordHasher.HashPassword(existingUser2, DevDemoPassword);
+            logger.LogInformation("Updated password hash for customer 2: {Email}", cus2Email);
         }
 
         await context.SaveChangesAsync();
