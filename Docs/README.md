@@ -222,28 +222,59 @@ npm run dev
 ```
 The frontend will start at [http://localhost:3000](http://localhost:3000).
 
+## Database Management & Development Reset
+
+### Database Documentation
+See [Docs/database.md](Docs/database.md) for the complete Entity Dictionary, Check Constraints, Indexes, and Mermaid ER Diagram.
+
+### Reset Development Database (Clean Rebuild)
+```bash
+# Windows PowerShell
+./scripts/db-reset.ps1
+
+# Linux / Bash
+./scripts/db-reset.sh
+
+# Or using Docker Compose directly
+docker compose down -v
+docker compose up --build -d
+```
+> [!NOTE]
+> `docker compose down` preserves the SQL Server volume (`locallink_sql_data`).  
+> `docker compose down -v` wipes the volume and triggers automatic migrations + seeding upon startup.
+
+### Update Database Migrations
+```bash
+# Windows PowerShell
+./scripts/db-update.ps1
+
+# Linux / Bash
+./scripts/db-update.sh
+```
+
 ---
 
-## EF Core Migrations
+## EF Core Migrations Workflow for Team
 
-To add a new migration in future milestones:
-
-```bash
-cd backend
-dotnet dotnet-ef migrations add <MigrationName> \
-  --project src/LocalLink.Infrastructure \
-  --startup-project src/LocalLink.API \
-  --output-dir Persistence/Migrations
-```
-
-To apply migrations to the database:
-
-```bash
-cd backend
-dotnet dotnet-ef database update \
-  --project src/LocalLink.Infrastructure \
-  --startup-project src/LocalLink.API
-```
+When modifying or adding domain entities:
+1. Modify entity in `src/LocalLink.Domain/Entities/`
+2. Modify or add `IEntityTypeConfiguration<T>` in `src/LocalLink.Infrastructure/Persistence/Configurations/`
+3. Generate migration:
+   ```bash
+   cd backend
+   dotnet dotnet-ef migrations add <MigrationName> \
+     --project src/LocalLink.Infrastructure \
+     --startup-project src/LocalLink.API \
+     --output-dir Persistence/Migrations
+   ```
+4. Review generated migration files
+5. Apply migration:
+   ```bash
+   dotnet dotnet-ef database update \
+     --project src/LocalLink.Infrastructure \
+     --startup-project src/LocalLink.API
+   ```
+6. Commit entity, configuration, and migration files to Git.
 
 ---
 
@@ -254,17 +285,17 @@ Returns system status along with the health of each registered dependency:
 ```json
 {
   "status": "Healthy",
-  "totalDurationMs": 25.47,
+  "totalDurationMs": 28.21,
   "entries": [
     {
       "key": "self",
       "status": "Healthy",
-      "durationMs": 1.02
+      "durationMs": 1.01
     },
     {
       "key": "sqlserver",
       "status": "Healthy",
-      "durationMs": 20.55
+      "durationMs": 22.01
     }
   ]
 }
@@ -278,7 +309,7 @@ Returns technical system runtime telemetry:
   "status": "running",
   "environment": "Development",
   "database": "connected",
-  "timestampUtc": "2026-08-18T05:04:34Z",
+  "timestampUtc": "2026-08-18T07:31:45Z",
   "version": "1.0.0"
 }
 ```
@@ -298,7 +329,7 @@ Returns technical system runtime telemetry:
 ## Development Roadmap
 
 - [x] **Milestone 1**: Project Foundation (Backend, Frontend, SQL Server 2022, Docker Compose) ✅
-- [ ] **Milestone 2**: Database Design & Banking Entities (Schema, Migrations, Seeders)
+- [x] **Milestone 2**: Database Design & Core Banking Schema (13 Entities, Migrations, Seeders) ✅
 - [ ] **Milestone 3**: Authentication + JWT + Refresh Token + RBAC
 - [ ] **Milestone 4**: Customer Management & Bank Accounts
 - [ ] **Milestone 5**: Transfer Engine, Transactions & Audit Log

@@ -2,6 +2,7 @@ using LocalLink.API.Extensions;
 using LocalLink.API.Middleware;
 using LocalLink.Infrastructure.DependencyInjection;
 using LocalLink.Infrastructure.Persistence;
+using LocalLink.Infrastructure.Persistence.Seeders;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,7 +30,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// Auto-apply migrations at startup in Container / Development environment if enabled
+// Auto-apply migrations and seed data at startup in Container / Development environment if enabled
 if (app.Environment.IsDevelopment() || Environment.GetEnvironmentVariable("APPLY_MIGRATIONS_AT_STARTUP") == "true")
 {
     using var scope = app.Services.CreateScope();
@@ -53,11 +54,14 @@ if (app.Environment.IsDevelopment() || Environment.GetEnvironmentVariable("APPLY
                 {
                     logger.LogInformation("Database is up to date. No pending migrations.");
                 }
+
+                // Run development seeder
+                await DatabaseSeeder.SeedAsync(dbContext, logger);
             }
         }
         catch (Exception ex)
         {
-            logger.LogWarning(ex, "Could not automatically apply migrations on startup (SQL Server might still be starting up).");
+            logger.LogWarning(ex, "Could not automatically apply migrations or seed data on startup.");
         }
     }
 }

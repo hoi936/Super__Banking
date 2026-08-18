@@ -12,6 +12,19 @@ public class ApplicationDbContext : DbContext
     }
 
     public DbSet<SystemInfo> SystemInfos => Set<SystemInfo>();
+    public DbSet<User> Users => Set<User>();
+    public DbSet<Role> Roles => Set<Role>();
+    public DbSet<UserRole> UserRoles => Set<UserRole>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+    public DbSet<Customer> Customers => Set<Customer>();
+    public DbSet<BankAccount> BankAccounts => Set<BankAccount>();
+    public DbSet<Beneficiary> Beneficiaries => Set<Beneficiary>();
+    public DbSet<Transaction> Transactions => Set<Transaction>();
+    public DbSet<Transfer> Transfers => Set<Transfer>();
+    public DbSet<Bill> Bills => Set<Bill>();
+    public DbSet<Payment> Payments => Set<Payment>();
+    public DbSet<Notification> Notifications => Set<Notification>();
+    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
