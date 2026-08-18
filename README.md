@@ -4,6 +4,9 @@
 
 InterLink Banking is an enterprise-ready, cloud-native financial platform designed for connected regional banking and localized digital financial services. Built with a robust **Modular Monolith + Clean Architecture**, the platform provides high-throughput transaction processing, resilient data persistence, and modern reactive client experiences.
 
+> [!TIP]
+> 📖 **Xem tài liệu hướng dẫn chạy dự án chi tiết bằng Tiếng Việt**: [Docs/HUONG_DAN_CHAY_DU_AN.md](Docs/HUONG_DAN_CHAY_DU_AN.md)
+
 ---
 
 ## Architecture Overview
