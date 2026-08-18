@@ -480,7 +480,7 @@ Returns technical system runtime telemetry:
 - [x] **Milestone 4**: Customer Management & Bank Accounts ✅
 - [x] **Milestone 5**: Transfer Engine, Transactions & Audit Log ✅
 - [x] **Milestone 6**: Bill Payment System & Notifications ✅
-- [ ] **Milestone 7**: Frontend Banking Dashboard UI
-- [ ] **Milestone 8**: Comprehensive Integration & Docker Testing
+- [x] **Milestone 7**: Staff/Admin Operations & Backend V1 Finalization ✅
+- [x] **Milestone 8**: Frontend UI (FE1: Auth & App Shell, FE2: Dashboard & Accounts) ✅
 - [ ] **Milestone 9**: Cloud Deployment (Azure) & CI/CD Pipelines
 - [ ] **Milestone 10**: Terraform Infrastructure as Code & Observability (Prometheus, Grafana)

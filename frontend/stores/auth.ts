@@ -34,10 +34,10 @@ export const useAuthStore = defineStore('auth', {
         const response = await authService.login(request)
         
         this.user = response.user
-        this.accessToken = response.tokens.accessToken
+        this.accessToken = response.accessToken
         
         if (process.client) {
-          localStorage.setItem('locallink_refresh_token', response.tokens.refreshToken)
+          localStorage.setItem('locallink_refresh_token', response.refreshToken)
         }
         
         return true

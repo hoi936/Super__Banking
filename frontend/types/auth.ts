@@ -23,5 +23,7 @@ export interface TokenResponse {
 
 export interface LoginResponse {
   user: CurrentUser
-  tokens: TokenResponse
+  accessToken: string
+  refreshToken: string
+  expiresAtUtc: string
 }
