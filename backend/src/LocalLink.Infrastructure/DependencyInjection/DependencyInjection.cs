@@ -60,6 +60,13 @@ public static class DependencyInjection
         services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<INotificationService, NotificationService>();
 
+        // Admin Services
+        services.AddScoped<LocalLink.Application.Admin.Interfaces.IAdminDashboardService, LocalLink.Infrastructure.Services.Admin.AdminDashboardService>();
+        services.AddScoped<LocalLink.Application.Admin.Interfaces.IAdminTransactionService, LocalLink.Infrastructure.Services.Admin.AdminTransactionService>();
+        services.AddScoped<LocalLink.Application.Admin.Interfaces.IAdminPaymentService, LocalLink.Infrastructure.Services.Admin.AdminPaymentService>();
+        services.AddScoped<LocalLink.Application.Admin.Interfaces.IAdminUserService, LocalLink.Infrastructure.Services.Admin.AdminUserService>();
+        services.AddScoped<LocalLink.Application.Admin.Interfaces.IAdminAuditService, LocalLink.Infrastructure.Services.Admin.AdminAuditService>();
+
         return services;
     }
 }

@@ -84,6 +84,39 @@ public static class DatabaseSeeder
             logger.LogInformation("Updated password hash for admin user: {AdminEmail}", adminEmail);
         }
 
+        // 2.5. Seed Staff User
+        var staffEmail = "staff@locallink.local";
+        var existingStaff = await context.Users
+            .Include(u => u.UserRoles)
+            .FirstOrDefaultAsync(u => u.Email == staffEmail);
+
+        if (existingStaff == null)
+        {
+            var staffUser = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = staffEmail,
+                Status = UserStatus.Active,
+                CreatedAtUtc = DateTime.UtcNow
+            };
+            staffUser.PasswordHash = passwordHasher.HashPassword(staffUser, DevDemoPassword);
+
+            staffUser.UserRoles.Add(new UserRole
+            {
+                UserId = staffUser.Id,
+                RoleId = roleMap["STAFF"].Id,
+                CreatedAtUtc = DateTime.UtcNow
+            });
+
+            context.Users.Add(staffUser);
+            logger.LogInformation("Seeded staff user: {StaffEmail}", staffEmail);
+        }
+        else if (passwordHasher.VerifyHashedPassword(existingStaff, existingStaff.PasswordHash, DevDemoPassword) == PasswordVerificationResult.Failed)
+        {
+            existingStaff.PasswordHash = passwordHasher.HashPassword(existingStaff, DevDemoPassword);
+            logger.LogInformation("Updated password hash for staff user: {StaffEmail}", staffEmail);
+        }
+
         // 3. Seed Customer 1: Nguyen Van An
         var cus1Email = "customer1@locallink.local";
         var cus1Code = "CUS000001";

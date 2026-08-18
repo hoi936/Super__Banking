@@ -12,6 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
 builder.Services.AddAppCors(builder.Configuration);
 builder.Services.AddAppHealthChecks(builder.Configuration);
+builder.Services.AddAppRateLimiting();
 builder.Services.AddAppSwagger();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddAppAuthentication(builder.Configuration);
@@ -20,8 +21,11 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+app.UseMiddleware<SecurityHeadersMiddleware>();
 
 app.UseAppSwagger(app.Environment);
+
+app.UseRateLimiter();
 
 app.UseCors(CorsExtensions.CorsPolicyName);
 
