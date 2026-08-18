@@ -2,7 +2,7 @@ import { ref, computed } from 'vue'
 import type { CustomerProfile } from '~/types/customer'
 import type { AccountSummary } from '~/types/account'
 import type { TransactionListItem } from '~/types/transaction'
-import type { BillListItem } from '~/types/bill'
+import type { BillListItemDto } from '~/types/bill'
 import { useCustomerService } from '~/services/customerService'
 import { useAccountService } from '~/services/accountService'
 import { useTransactionService } from '~/services/transactionService'
@@ -17,7 +17,7 @@ export function useDashboard() {
   const profile = ref<CustomerProfile | null>(null)
   const accounts = ref<AccountSummary[]>([])
   const recentTransactions = ref<TransactionListItem[]>([])
-  const bills = ref<BillListItem[]>([])
+  const bills = ref<BillListItemDto[]>([])
   
   const isLoading = ref(true)
   const hasError = ref(false)

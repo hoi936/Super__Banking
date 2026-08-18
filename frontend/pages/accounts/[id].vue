@@ -86,7 +86,7 @@
         
         <q-card-actions class="q-pa-md bg-grey-2" align="around">
           <q-btn flat color="primary" icon="send" label="Chuyển tiền" 
-                 :to="`/transfers?source=${account.id}`" />
+                 :to="`/transfer?sourceAccount=${account.id}`" />
           <q-btn flat color="primary" icon="receipt" label="Thanh toán hóa đơn" 
                  to="/bills" />
           <q-btn flat color="primary" icon="history" label="Lịch sử giao dịch" 

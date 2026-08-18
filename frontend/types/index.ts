@@ -21,6 +21,7 @@ export interface HealthCheckResponse {
 
 export * from './auth'
 export * from './account'
+export * from './customer'
 export * from './transfer'
 export * from './beneficiary'
 export * from './transaction'

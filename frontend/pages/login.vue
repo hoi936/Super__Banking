@@ -16,7 +16,7 @@
 
         <q-form @submit="onSubmit" class="q-gutter-md">
           <q-input
-            v-model="email"
+            v-model.trim="email"
             type="email"
             label="Email đăng nhập *"
             outlined

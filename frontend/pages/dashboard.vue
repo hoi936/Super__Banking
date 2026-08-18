@@ -35,7 +35,7 @@
         <!-- Quick Actions -->
         <div class="row q-col-gutter-sm q-mb-md">
           <div class="col-4">
-            <q-btn outline color="primary" class="full-width q-py-sm bg-white" to="/transfers">
+            <q-btn outline color="primary" class="full-width q-py-sm bg-white" to="/transfer">
               <q-icon name="send" class="q-mb-xs" size="sm" />
               <div class="text-caption">Chuyển tiền</div>
             </q-btn>

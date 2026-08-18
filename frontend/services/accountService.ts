@@ -16,8 +16,15 @@ export function useAccountService() {
     })
   }
 
+  const lookupAccount = async (accountNumber: string): Promise<{ accountNumber: string, accountName: string }> => {
+    return await $api<{ accountNumber: string, accountName: string }>(`/api/v1/accounts/lookup/${accountNumber}`, {
+      method: 'GET'
+    })
+  }
+
   return {
     getAccounts,
-    getAccount
+    getAccount,
+    lookupAccount
   }
 }
