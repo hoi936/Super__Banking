@@ -19,13 +19,13 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'LocalLink — Regional Banking & Local Services Platform',
+      title: 'InterLink Banking — Connected Regional Banking & Local Services Platform',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         {
           name: 'description',
-          content: 'LocalLink: Cloud-native Regional Banking & Local Services Platform built with ASP.NET Core, Nuxt, and SQL Server.'
+          content: 'InterLink Banking: Cloud-native Connected Regional Banking & Local Services Platform built with ASP.NET Core, Nuxt, and SQL Server.'
         }
       ],
       link: [

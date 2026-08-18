@@ -1,7 +1,13 @@
+using LocalLink.Application.Accounts.Interfaces;
+using LocalLink.Application.Auth.Interfaces;
+using LocalLink.Application.Beneficiaries.Interfaces;
+using LocalLink.Application.Customers.Interfaces;
+using LocalLink.Infrastructure.Authentication;
+using LocalLink.Infrastructure.Persistence;
+using LocalLink.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using LocalLink.Infrastructure.Persistence;
 
 namespace LocalLink.Infrastructure.DependencyInjection;
 
@@ -24,6 +30,21 @@ public static class DependencyInjection
                 });
             }
         });
+
+        // JWT Configuration Options
+        services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
+
+        // Authentication Services
+        services.AddSingleton<IPasswordHasherService, PasswordHasherService>();
+        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IAuthService, AuthService>();
+
+        // Customer & Banking Services
+        services.AddScoped<ICustomerService, CustomerService>();
+        services.AddScoped<IAdminCustomerService, AdminCustomerService>();
+        services.AddScoped<IAccountService, AccountService>();
+        services.AddScoped<IAdminAccountService, AdminAccountService>();
+        services.AddScoped<IBeneficiaryService, BeneficiaryService>();
 
         return services;
     }

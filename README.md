@@ -1,8 +1,11 @@
-# LocalLink
+# InterLink Banking
 
-**Cloud-native Regional Banking & Local Services Platform**
+**Cloud-native Connected Regional Banking & Local Services Platform**
 
-LocalLink is an enterprise-ready, cloud-native financial platform designed for regional banking and localized digital financial services. Built with a robust **Modular Monolith + Clean Architecture**, the platform provides high-throughput transaction processing, resilient data persistence, and modern reactive client experiences.
+InterLink Banking is an enterprise-ready, cloud-native financial platform designed for connected regional banking and localized digital financial services. Built with a robust **Modular Monolith + Clean Architecture**, the platform provides high-throughput transaction processing, resilient data persistence, and modern reactive client experiences.
+
+> [!TIP]
+> 📖 **Xem tài liệu hướng dẫn chạy dự án chi tiết bằng Tiếng Việt**: [Docs/HUONG_DAN_CHAY_DU_AN.md](Docs/HUONG_DAN_CHAY_DU_AN.md)
 
 > **Note**: Active development branch: `feature/huy`.
 > **Note**: Active development branch: `feature/hoi`.
@@ -225,28 +228,132 @@ npm run dev
 ```
 The frontend will start at [http://localhost:3000](http://localhost:3000).
 
+## Database Management & Development Reset
+
+### Database Documentation
+See [Docs/database.md](Docs/database.md) for the complete Entity Dictionary, Check Constraints, Indexes, and Mermaid ER Diagram.
+
+### Reset Development Database (Clean Rebuild)
+```bash
+# Windows PowerShell
+./scripts/db-reset.ps1
+
+# Linux / Bash
+./scripts/db-reset.sh
+
+# Or using Docker Compose directly
+docker compose down -v
+docker compose up --build -d
+```
+> [!NOTE]
+> `docker compose down` preserves the SQL Server volume (`locallink_sql_data`).  
+> `docker compose down -v` wipes the volume and triggers automatic migrations + seeding upon startup.
+
+### Update Database Migrations
+```bash
+# Windows PowerShell
+./scripts/db-update.ps1
+
+# Linux / Bash
+./scripts/db-update.sh
+```
+
 ---
 
-## EF Core Migrations
+## EF Core Migrations Workflow for Team
 
-To add a new migration in future milestones:
+When modifying or adding domain entities:
+1. Modify entity in `src/LocalLink.Domain/Entities/`
+2. Modify or add `IEntityTypeConfiguration<T>` in `src/LocalLink.Infrastructure/Persistence/Configurations/`
+3. Generate migration:
+   ```bash
+   cd backend
+   dotnet dotnet-ef migrations add <MigrationName> \
+     --project src/LocalLink.Infrastructure \
+     --startup-project src/LocalLink.API \
+     --output-dir Persistence/Migrations
+   ```
+4. Review generated migration files
+5. Apply migration:
+   ```bash
+   dotnet dotnet-ef database update \
+     --project src/LocalLink.Infrastructure \
+     --startup-project src/LocalLink.API
+   ```
+6. Commit entity, configuration, and migration files to Git.
 
-```bash
-cd backend
-dotnet dotnet-ef migrations add <MigrationName> \
-  --project src/LocalLink.Infrastructure \
-  --startup-project src/LocalLink.API \
-  --output-dir Persistence/Migrations
-```
+---
 
-To apply migrations to the database:
+## Health Checks & Diagnostic Endpoints
 
-```bash
-cd backend
-dotnet dotnet-ef database update \
-  --project src/LocalLink.Infrastructure \
-  --startup-project src/LocalLink.API
-```
+### `/health`
+Returns system status along with the health of each registered dependency:
+## Authentication & Development Demo Credentials
+
+### Development Demo Accounts
+> [!NOTE]
+> **Development only**. Never use these demo credentials in production.
+
+| Account | Email | Password | Role | Customer Profile |
+| :--- | :--- | :--- | :--- | :--- |
+| **Admin** | `admin@locallink.local` | `LocalLink@123` | `ADMIN` | — |
+| **Customer 1** | `customer1@locallink.local` | `LocalLink@123` | `CUSTOMER` | `Nguyen Van An` (`CUS000001`) |
+| **Customer 2** | `customer2@locallink.local` | `LocalLink@123` | `CUSTOMER` | `Tran Thi Binh` (`CUS000002`) |
+
+### Auth API Endpoints
+
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/v1/auth/login` | Public | Login with email & password, returns JWT and Refresh Token |
+| `POST` | `/api/v1/auth/refresh` | Public | Rotates Refresh Token and returns new JWT access token |
+| `POST` | `/api/v1/auth/logout` | `[Authorize]` | Revokes active Refresh Token and logs audit entry |
+| `GET` | `/api/v1/auth/me` | `[Authorize]` | Returns current user profile, roles, and customer info |
+| `GET` | `/api/v1/auth/test/customer` | `[Authorize(Roles = "CUSTOMER")]` | Verification endpoint for CUSTOMER role |
+| `GET` | `/api/v1/auth/test/staff` | `[Authorize(Roles = "STAFF")]` | Verification endpoint for STAFF role |
+| `GET` | `/api/v1/auth/test/admin` | `[Authorize(Roles = "ADMIN")]` | Verification endpoint for ADMIN role |
+
+### Customer & Banking Account Endpoints
+
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/v1/customers/me` | `CUSTOMER` | View own customer profile |
+| `PUT` | `/api/v1/customers/me` | `CUSTOMER` | Update own allowed profile fields (FullName, DOB, Gender, Phone, Address) |
+| `GET` | `/api/v1/accounts` | `CUSTOMER` | List bank accounts strictly owned by current customer |
+| `GET` | `/api/v1/accounts/{id}` | `CUSTOMER` | View own bank account detail (Ownership enforced; returns 404 for unowned accounts) |
+| `GET` | `/api/v1/accounts/lookup/{accountNumber}` | `CUSTOMER` | Minimal lookup of active account (number and holder name) for transfers |
+| `GET` | `/api/v1/beneficiaries` | `CUSTOMER` | List saved beneficiaries for current customer |
+| `POST` | `/api/v1/beneficiaries` | `CUSTOMER` | Add beneficiary (blocks closed accounts, own account, and duplicates) |
+| `DELETE` | `/api/v1/beneficiaries/{id}` | `CUSTOMER` | Delete saved beneficiary (Ownership enforced) |
+
+### Staff & Admin Management Endpoints
+
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/v1/admin/customers` | `STAFF`, `ADMIN` | Paginated & searchable list of customers (SQL-level paging & filtering) |
+| `GET` | `/api/v1/admin/customers/{id}` | `STAFF`, `ADMIN` | Full customer detail with user status, roles, and accounts summary |
+| `GET` | `/api/v1/admin/customers/{id}/accounts` | `STAFF`, `ADMIN` | Read-only list of bank accounts for a specific customer |
+| `PATCH` | `/api/v1/admin/customers/{id}/status` | `ADMIN` | Change customer status (`ACTIVE` $\leftrightarrow$ `SUSPENDED`) + creates `AuditLog` |
+| `PATCH` | `/api/v1/admin/accounts/{id}/status` | `ADMIN` | Change account status (`ACTIVE` $\leftrightarrow$ `LOCKED`) + creates `AuditLog` |
+
+---
+
+## RBAC Authorization Matrix
+
+| Endpoint | `CUSTOMER` | `STAFF` | `ADMIN` |
+| :--- | :---: | :---: | :---: |
+| `GET /api/v1/customers/me` | ✅ | ❌ | ❌ |
+| `PUT /api/v1/customers/me` | ✅ | ❌ | ❌ |
+| `GET /api/v1/accounts` | ✅ | ❌ | ❌ |
+| `GET /api/v1/accounts/{id}` | ✅ | ❌ | ❌ |
+| `GET /api/v1/accounts/lookup/{accNum}` | ✅ | ❌ | ❌ |
+| `GET /api/v1/beneficiaries` | ✅ | ❌ | ❌ |
+| `POST /api/v1/beneficiaries` | ✅ | ❌ | ❌ |
+| `DELETE /api/v1/beneficiaries/{id}` | ✅ | ❌ | ❌ |
+| `GET /api/v1/admin/customers` | ❌ | ✅ | ✅ |
+| `GET /api/v1/admin/customers/{id}` | ❌ | ✅ | ✅ |
+| `GET /api/v1/admin/customers/{id}/accounts` | ❌ | ✅ | ✅ |
+| `PATCH /api/v1/admin/customers/{id}/status` | ❌ | ❌ | ✅ |
+| `PATCH /api/v1/admin/accounts/{id}/status` | ❌ | ❌ | ✅ |
 
 ---
 
@@ -257,17 +364,17 @@ Returns system status along with the health of each registered dependency:
 ```json
 {
   "status": "Healthy",
-  "totalDurationMs": 25.47,
+  "totalDurationMs": 28.21,
   "entries": [
     {
       "key": "self",
       "status": "Healthy",
-      "durationMs": 1.02
+      "durationMs": 1.01
     },
     {
       "key": "sqlserver",
       "status": "Healthy",
-      "durationMs": 20.55
+      "durationMs": 22.01
     }
   ]
 }
@@ -281,7 +388,7 @@ Returns technical system runtime telemetry:
   "status": "running",
   "environment": "Development",
   "database": "connected",
-  "timestampUtc": "2026-08-18T05:04:34Z",
+  "timestampUtc": "2026-08-18T07:31:45Z",
   "version": "1.0.0"
 }
 ```
@@ -292,7 +399,7 @@ Returns technical system runtime telemetry:
 
 | Service | Container Name | Image | Port | Description |
 | :--- | :--- | :--- | :--- | :--- |
-| **locallink-web** | `locallink-web` | Custom (Node 24 Alpine) | `3000:3000` | Nuxt 3 Frontend client |
+| **locallink-web** | `locallink-web` | Custom (Node 24 Alpine) | `3000:3000` | Nuxt 4 Frontend client |
 | **locallink-api** | `locallink-api` | Custom (ASP.NET 10.0) | `8080:8080` | ASP.NET Core REST API Gateway |
 | **locallink-sqlserver** | `locallink-sqlserver` | `mssql/server:2022-latest` | `1433:1433` | Microsoft SQL Server 2022 Engine |
 
@@ -301,9 +408,9 @@ Returns technical system runtime telemetry:
 ## Development Roadmap
 
 - [x] **Milestone 1**: Project Foundation (Backend, Frontend, SQL Server 2022, Docker Compose) ✅
-- [ ] **Milestone 2**: Database Design & Banking Entities (Schema, Migrations, Seeders)
-- [ ] **Milestone 3**: Authentication + JWT + Refresh Token + RBAC
-- [ ] **Milestone 4**: Customer Management & Bank Accounts
+- [x] **Milestone 2**: Database Design & Core Banking Schema (13 Entities, Migrations, Seeders) ✅
+- [x] **Milestone 3**: Authentication + JWT + Refresh Token + RBAC ✅
+- [x] **Milestone 4**: Customer Management & Bank Accounts ✅
 - [ ] **Milestone 5**: Transfer Engine, Transactions & Audit Log
 - [ ] **Milestone 6**: Frontend Banking Dashboard UI
 - [ ] **Milestone 7**: Bill Payment System & Notifications
