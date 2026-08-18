@@ -227,23 +227,4 @@ const onMobilePageChange = () => {
   loadData()
 }
 
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'UNPAID': return 'warning'
-    case 'PAID': return 'positive'
-    case 'OVERDUE': return 'negative'
-    case 'CANCELLED': return 'grey'
-    default: return 'primary'
-  }
-}
-
-const getStatusLabel = (status: string) => {
-  switch (status) {
-    case 'UNPAID': return 'Chưa thanh toán'
-    case 'PAID': return 'Đã thanh toán'
-    case 'OVERDUE': return 'Quá hạn'
-    case 'CANCELLED': return 'Đã hủy'
-    default: return status
-  }
-}
 </script>

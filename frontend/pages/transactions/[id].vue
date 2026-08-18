@@ -83,6 +83,7 @@ import { useQuasar } from 'quasar'
 import AppAlert from '~/components/common/AppAlert.vue'
 import { formatCurrency } from '~/utils/currency'
 import { formatDateTime } from '~/utils/date'
+import { getTransactionStatusColor as getStatusColor, getTransactionStatusLabel as getStatusLabel } from '~/utils/status'
 import { useTransactionService } from '~/services/transactionService'
 import { useAuthStore } from '~/stores/auth'
 import type { TransactionDetail } from '~/types'
@@ -161,15 +162,6 @@ const getAmountPrefix = (tx: TransactionDetail) => {
   return ''
 }
 
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'COMPLETED': return 'positive'
-    case 'PENDING': return 'warning'
-    case 'FAILED': 
-    case 'CANCELLED': return 'negative'
-    default: return 'grey'
-  }
-}
 </script>
 
 <style scoped>

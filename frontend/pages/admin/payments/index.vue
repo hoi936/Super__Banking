@@ -138,6 +138,7 @@ import { useAdminPaymentService } from '~/services/adminPaymentService'
 import type { AdminPaymentListItemDto } from '~/types/adminPayment'
 import { formatCurrency } from '~/utils/currency'
 import { formatDateTime } from '~/utils/date'
+import { getTransactionStatusColor as getStatusColor, getTransactionStatusLabel as getStatusLabel } from '~/utils/status'
 
 definePageMeta({
   layout: 'admin',
@@ -243,24 +244,6 @@ const fetchPayments = async (props?: any) => {
 
 const onRequest = (props: any) => {
   fetchPayments(props)
-}
-
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'COMPLETED': return 'positive'
-    case 'PENDING': return 'warning'
-    case 'FAILED': return 'negative'
-    default: return 'grey'
-  }
-}
-
-const getStatusLabel = (status: string) => {
-  switch (status) {
-    case 'COMPLETED': return 'Thành công'
-    case 'PENDING': return 'Chờ xử lý'
-    case 'FAILED': return 'Thất bại'
-    default: return status
-  }
 }
 
 const getBillTypeIcon = (type: string) => {

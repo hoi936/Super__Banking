@@ -155,8 +155,8 @@
 
           <div class="telemetry-grid">
             <div class="telemetry-item">
-              <span class="telemetry-label">Application</span>
-              <span class="telemetry-value">{{ systemData?.application || 'LocalLink' }}</span>
+              <div class="telemetry-label text-caption text-grey-5">Application</div>
+              <span class="telemetry-value">{{ systemData?.application || 'InterLink Banking' }}</span>
             </div>
             <div class="telemetry-item">
               <span class="telemetry-label">Environment</span>

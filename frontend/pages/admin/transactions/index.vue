@@ -139,6 +139,7 @@ import { useAdminTransactionService } from '~/services/adminTransactionService'
 import type { AdminTransactionListItemDto } from '~/types/adminTransaction'
 import { formatCurrency } from '~/utils/currency'
 import { formatDateTime } from '~/utils/date'
+import { getTransactionStatusColor as getStatusColor, getTransactionStatusLabel as getStatusLabel } from '~/utils/status'
 
 definePageMeta({
   layout: 'admin',
@@ -243,26 +244,6 @@ const fetchTransactions = async (props?: any) => {
 
 const onRequest = (props: any) => {
   fetchTransactions(props)
-}
-
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'COMPLETED': return 'positive'
-    case 'PENDING': return 'warning'
-    case 'FAILED': return 'negative'
-    case 'REVERSED': return 'info'
-    default: return 'grey'
-  }
-}
-
-const getStatusLabel = (status: string) => {
-  switch (status) {
-    case 'COMPLETED': return 'Thành công'
-    case 'PENDING': return 'Chờ xử lý'
-    case 'FAILED': return 'Thất bại'
-    case 'REVERSED': return 'Hoàn tiền'
-    default: return status
-  }
 }
 
 const getTypeColor = (type: string) => {

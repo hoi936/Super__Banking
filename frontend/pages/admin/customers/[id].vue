@@ -295,26 +295,6 @@ const confirmToggleAccountStatus = (account: AccountSummary) => {
   })
 }
 
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'ACTIVE': return 'positive'
-    case 'SUSPENDED': return 'negative'
-    case 'LOCKED': return 'negative'
-    case 'CLOSED': return 'grey-6'
-    default: return 'grey'
-  }
-}
-
-const getStatusLabel = (status: string) => {
-  switch (status) {
-    case 'ACTIVE': return 'Hoạt động'
-    case 'SUSPENDED': return 'Tạm khóa'
-    case 'LOCKED': return 'Khóa'
-    case 'CLOSED': return 'Đã đóng'
-    default: return status
-  }
-}
-
 onMounted(() => {
   fetchCustomerDetail()
 })

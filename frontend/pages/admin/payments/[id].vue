@@ -152,6 +152,7 @@ import { useAdminPaymentService } from '~/services/adminPaymentService'
 import type { AdminPaymentDetailDto } from '~/types/adminPayment'
 import { formatCurrency } from '~/utils/currency'
 import { formatDateTime } from '~/utils/date'
+import { getTransactionStatusColor as getStatusColor, getTransactionStatusLabel as getStatusLabel } from '~/utils/status'
 
 definePageMeta({
   layout: 'admin',
@@ -180,24 +181,6 @@ const fetchPayment = async () => {
     errorMessage.value = error.data?.title || 'Không thể lấy thông tin thanh toán'
   } finally {
     isLoading.value = false
-  }
-}
-
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'COMPLETED': return 'positive'
-    case 'PENDING': return 'warning'
-    case 'FAILED': return 'negative'
-    default: return 'grey'
-  }
-}
-
-const getStatusLabel = (status: string) => {
-  switch (status) {
-    case 'COMPLETED': return 'Thành công'
-    case 'PENDING': return 'Chờ xử lý'
-    case 'FAILED': return 'Thất bại'
-    default: return status
   }
 }
 

@@ -98,6 +98,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useAdminCustomerService } from '~/services/adminCustomerService'
 import type { AdminCustomerListItemDto } from '~/types/adminCustomer'
 import { formatDateTime } from '~/utils/date'
+import { getUserStatusColor as getStatusColor, getUserStatusLabel as getStatusLabel } from '~/utils/status'
 
 definePageMeta({
   layout: 'admin',
@@ -176,24 +177,6 @@ const fetchCustomers = async (props?: any) => {
 
 const onRequest = (props: any) => {
   fetchCustomers(props)
-}
-
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'ACTIVE': return 'positive'
-    case 'SUSPENDED': return 'negative'
-    case 'CLOSED': return 'grey-6'
-    default: return 'grey'
-  }
-}
-
-const getStatusLabel = (status: string) => {
-  switch (status) {
-    case 'ACTIVE': return 'Hoạt động'
-    case 'SUSPENDED': return 'Tạm khóa'
-    case 'CLOSED': return 'Đã đóng'
-    default: return status
-  }
 }
 
 onMounted(() => {

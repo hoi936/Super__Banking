@@ -617,6 +617,21 @@ sequenceDiagram
 | `PATCH /api/v1/admin/customers/{id}/status` | ❌ | ❌ | ✅ |
 | `PATCH /api/v1/admin/accounts/{id}/status` | ❌ | ❌ | ✅ |
 
+## Testing & Verification
+
+The project includes PowerShell scripts for automated API regression testing across milestones:
+```bash
+# Windows PowerShell
+./scripts/verify-m5-transfer.ps1
+./scripts/verify-m6-bills.ps1
+./scripts/verify-m7-admin.ps1
+./scripts/verify-fe6-api.ps1
+
+# Run backend unit tests
+cd backend
+dotnet test
+```
+
 ---
 
 ## Health Checks & Diagnostic Endpoints
@@ -676,7 +691,7 @@ Returns technical system runtime telemetry:
 - [x] **Milestone 5**: Transfer Engine, Transactions & Audit Log ✅
 - [x] **Milestone 6**: Bill Payment System & Notifications ✅
 - [x] **Milestone 7**: Admin Operations & Backend V1 Finalization ✅
-- [ ] **Milestone 8**: Frontend Nuxt 4 / Vue 3 SPA Implementation
+- [x] **Milestone 8**: Frontend Nuxt 4 / Vue 3 SPA Implementation ✅
 - [ ] **Milestone 9**: Comprehensive Integration & Docker Testing
 - [ ] **Milestone 10**: Cloud Deployment (Azure) & CI/CD Pipelines
 - [ ] **Milestone 11**: Terraform Infrastructure as Code & Observability (Prometheus, Grafana)

@@ -119,6 +119,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useAdminUserService } from '~/services/adminUserService'
 import type { AdminUserListItemDto } from '~/types/adminUser'
 import { formatDateTime } from '~/utils/date'
+import { getUserStatusColor as getStatusColor, getUserStatusLabel as getStatusLabel } from '~/utils/status'
 
 definePageMeta({
   layout: 'admin',
@@ -205,24 +206,6 @@ const fetchUsers = async (props?: any) => {
 
 const onRequest = (props: any) => {
   fetchUsers(props)
-}
-
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'ACTIVE': return 'positive'
-    case 'SUSPENDED': return 'warning'
-    case 'LOCKED': return 'negative'
-    default: return 'grey'
-  }
-}
-
-const getStatusLabel = (status: string) => {
-  switch (status) {
-    case 'ACTIVE': return 'Hoạt động'
-    case 'SUSPENDED': return 'Tạm khóa'
-    case 'LOCKED': return 'Khóa cứng'
-    default: return status
-  }
 }
 
 onMounted(() => {

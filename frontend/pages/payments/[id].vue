@@ -78,6 +78,7 @@ import { useQuasar } from 'quasar'
 import AppAlert from '~/components/common/AppAlert.vue'
 import { formatCurrency } from '~/utils/currency'
 import { formatDateTime } from '~/utils/date'
+import { getTransactionStatusColor as getStatusColor, getTransactionStatusLabel as getStatusLabel } from '~/utils/status'
 import { usePaymentService } from '~/services/paymentService'
 import type { PaymentDetailDto } from '~/types/payment'
 
@@ -129,24 +130,6 @@ const copyToClipboard = async (text: string) => {
     await navigator.clipboard.writeText(text)
     $q.notify({ message: 'Đã sao chép vào khay nhớ tạm', color: 'positive', position: 'bottom' })
   } catch (err) {}
-}
-
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'COMPLETED': return 'positive'
-    case 'PENDING': return 'warning'
-    case 'FAILED': return 'negative'
-    default: return 'grey'
-  }
-}
-
-const getStatusLabel = (status: string) => {
-  switch (status) {
-    case 'COMPLETED': return 'Thành công'
-    case 'PENDING': return 'Đang xử lý'
-    case 'FAILED': return 'Thất bại'
-    default: return status
-  }
 }
 
 const getBillTypeLabel = (type: string) => {

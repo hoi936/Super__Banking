@@ -151,6 +151,7 @@ import { useAuthStore } from '~/stores/auth'
 import { useAdminUserService } from '~/services/adminUserService'
 import type { AdminUserDetailDto } from '~/types/adminUser'
 import { formatDateTime } from '~/utils/date'
+import { getUserStatusColor as getStatusColor, getUserStatusLabel as getStatusLabel } from '~/utils/status'
 
 definePageMeta({
   layout: 'admin',
@@ -219,24 +220,6 @@ const confirmToggleUserStatus = () => {
       $q.notify({ type: 'negative', message: error.data?.title || `Lỗi khi ${actionName} tài khoản.` })
     }
   })
-}
-
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'ACTIVE': return 'positive'
-    case 'SUSPENDED': return 'warning'
-    case 'LOCKED': return 'negative'
-    default: return 'grey'
-  }
-}
-
-const getStatusLabel = (status: string) => {
-  switch (status) {
-    case 'ACTIVE': return 'Hoạt động'
-    case 'SUSPENDED': return 'Tạm khóa'
-    case 'LOCKED': return 'Khóa cứng'
-    default: return status
-  }
 }
 
 onMounted(() => {

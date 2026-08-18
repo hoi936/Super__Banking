@@ -137,6 +137,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { formatCurrency } from '~/utils/currency'
 import { formatDateTime } from '~/utils/date'
+import { getTransactionStatusColor as getStatusColor, getTransactionStatusLabel as getStatusLabel } from '~/utils/status'
 import { useTransactionService } from '~/services/transactionService'
 import { useAccountService } from '~/services/accountService'
 import type { TransactionListItem, AccountSummary } from '~/types'
@@ -258,13 +259,4 @@ const getAmountPrefix = (tx: TransactionListItem) => {
   return ''
 }
 
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'COMPLETED': return 'positive'
-    case 'PENDING': return 'warning'
-    case 'FAILED': 
-    case 'CANCELLED': return 'negative'
-    default: return 'grey'
-  }
-}
 </script>

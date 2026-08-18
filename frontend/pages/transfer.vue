@@ -423,6 +423,8 @@ const submitTransfer = async () => {
       } else {
         errorMessage.value = 'Không thể thực hiện giao dịch. Vui lòng thử lại.'
       }
+    } else if (error.response?.status === 429) {
+      errorMessage.value = 'Bạn đang thao tác quá nhanh. Vui lòng thử lại sau.'
     } else if (error.message.includes('fetch failed') || error.message.includes('Network Error')) {
       errorMessage.value = 'Không thể xác định trạng thái giao dịch. Vui lòng thử lại với cùng yêu cầu hoặc kiểm tra lịch sử giao dịch.'
     } else {

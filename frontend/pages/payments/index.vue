@@ -139,6 +139,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { formatCurrency } from '~/utils/currency'
 import { formatDateTime } from '~/utils/date'
+import { getTransactionStatusColor as getStatusColor, getTransactionStatusLabel as getStatusLabel } from '~/utils/status'
 import { usePaymentService } from '~/services/paymentService'
 import type { PaymentListItemDto } from '~/types/payment'
 
@@ -226,21 +227,4 @@ const onMobilePageChange = () => {
   loadData()
 }
 
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'COMPLETED': return 'positive'
-    case 'PENDING': return 'warning'
-    case 'FAILED': return 'negative'
-    default: return 'grey'
-  }
-}
-
-const getStatusLabel = (status: string) => {
-  switch (status) {
-    case 'COMPLETED': return 'Thành công'
-    case 'PENDING': return 'Đang xử lý'
-    case 'FAILED': return 'Thất bại'
-    default: return status
-  }
-}
 </script>
