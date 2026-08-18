@@ -5,6 +5,7 @@
 LocalLink is an enterprise-ready, cloud-native financial platform designed for regional banking and localized digital financial services. Built with a robust **Modular Monolith + Clean Architecture**, the platform provides high-throughput transaction processing, resilient data persistence, and modern reactive client experiences.
 
 > **Note**: Active development branch: `feature/huy`.
+> **Note**: Active development branch: `feature/hoi`.
 
 ---
 
