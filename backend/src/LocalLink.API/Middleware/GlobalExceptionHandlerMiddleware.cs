@@ -44,6 +44,57 @@ public class GlobalExceptionHandlerMiddleware
 
             await context.Response.WriteAsync(JsonSerializer.Serialize(problemDetails));
         }
+        catch (NotFoundException ex)
+        {
+            _logger.LogWarning("Resource not found: {Message}", ex.Message);
+
+            context.Response.ContentType = "application/problem+json";
+            context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+
+            var problemDetails = new ProblemDetails
+            {
+                Status = (int)HttpStatusCode.NotFound,
+                Title = "Not Found",
+                Detail = ex.Message,
+                Instance = context.Request.Path
+            };
+
+            await context.Response.WriteAsync(JsonSerializer.Serialize(problemDetails));
+        }
+        catch (ConflictException ex)
+        {
+            _logger.LogWarning("Conflict occurred: {Message}", ex.Message);
+
+            context.Response.ContentType = "application/problem+json";
+            context.Response.StatusCode = (int)HttpStatusCode.Conflict;
+
+            var problemDetails = new ProblemDetails
+            {
+                Status = (int)HttpStatusCode.Conflict,
+                Title = "Conflict",
+                Detail = ex.Message,
+                Instance = context.Request.Path
+            };
+
+            await context.Response.WriteAsync(JsonSerializer.Serialize(problemDetails));
+        }
+        catch (BadRequestException ex)
+        {
+            _logger.LogWarning("Bad request: {Message}", ex.Message);
+
+            context.Response.ContentType = "application/problem+json";
+            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+
+            var problemDetails = new ProblemDetails
+            {
+                Status = (int)HttpStatusCode.BadRequest,
+                Title = "Bad Request",
+                Detail = ex.Message,
+                Instance = context.Request.Path
+            };
+
+            await context.Response.WriteAsync(JsonSerializer.Serialize(problemDetails));
+        }
         catch (ForbiddenException ex)
         {
             _logger.LogWarning("Forbidden access attempt: {Message}", ex.Message);

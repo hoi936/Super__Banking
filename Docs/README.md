@@ -309,6 +309,49 @@ Returns system status along with the health of each registered dependency:
 | `GET` | `/api/v1/auth/test/staff` | `[Authorize(Roles = "STAFF")]` | Verification endpoint for STAFF role |
 | `GET` | `/api/v1/auth/test/admin` | `[Authorize(Roles = "ADMIN")]` | Verification endpoint for ADMIN role |
 
+### Customer & Banking Account Endpoints
+
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/v1/customers/me` | `CUSTOMER` | View own customer profile |
+| `PUT` | `/api/v1/customers/me` | `CUSTOMER` | Update own allowed profile fields (FullName, DOB, Gender, Phone, Address) |
+| `GET` | `/api/v1/accounts` | `CUSTOMER` | List bank accounts strictly owned by current customer |
+| `GET` | `/api/v1/accounts/{id}` | `CUSTOMER` | View own bank account detail (Ownership enforced; returns 404 for unowned accounts) |
+| `GET` | `/api/v1/accounts/lookup/{accountNumber}` | `CUSTOMER` | Minimal lookup of active account (number and holder name) for transfers |
+| `GET` | `/api/v1/beneficiaries` | `CUSTOMER` | List saved beneficiaries for current customer |
+| `POST` | `/api/v1/beneficiaries` | `CUSTOMER` | Add beneficiary (blocks closed accounts, own account, and duplicates) |
+| `DELETE` | `/api/v1/beneficiaries/{id}` | `CUSTOMER` | Delete saved beneficiary (Ownership enforced) |
+
+### Staff & Admin Management Endpoints
+
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/v1/admin/customers` | `STAFF`, `ADMIN` | Paginated & searchable list of customers (SQL-level paging & filtering) |
+| `GET` | `/api/v1/admin/customers/{id}` | `STAFF`, `ADMIN` | Full customer detail with user status, roles, and accounts summary |
+| `GET` | `/api/v1/admin/customers/{id}/accounts` | `STAFF`, `ADMIN` | Read-only list of bank accounts for a specific customer |
+| `PATCH` | `/api/v1/admin/customers/{id}/status` | `ADMIN` | Change customer status (`ACTIVE` $\leftrightarrow$ `SUSPENDED`) + creates `AuditLog` |
+| `PATCH` | `/api/v1/admin/accounts/{id}/status` | `ADMIN` | Change account status (`ACTIVE` $\leftrightarrow$ `LOCKED`) + creates `AuditLog` |
+
+---
+
+## RBAC Authorization Matrix
+
+| Endpoint | `CUSTOMER` | `STAFF` | `ADMIN` |
+| :--- | :---: | :---: | :---: |
+| `GET /api/v1/customers/me` | ✅ | ❌ | ❌ |
+| `PUT /api/v1/customers/me` | ✅ | ❌ | ❌ |
+| `GET /api/v1/accounts` | ✅ | ❌ | ❌ |
+| `GET /api/v1/accounts/{id}` | ✅ | ❌ | ❌ |
+| `GET /api/v1/accounts/lookup/{accNum}` | ✅ | ❌ | ❌ |
+| `GET /api/v1/beneficiaries` | ✅ | ❌ | ❌ |
+| `POST /api/v1/beneficiaries` | ✅ | ❌ | ❌ |
+| `DELETE /api/v1/beneficiaries/{id}` | ✅ | ❌ | ❌ |
+| `GET /api/v1/admin/customers` | ❌ | ✅ | ✅ |
+| `GET /api/v1/admin/customers/{id}` | ❌ | ✅ | ✅ |
+| `GET /api/v1/admin/customers/{id}/accounts` | ❌ | ✅ | ✅ |
+| `PATCH /api/v1/admin/customers/{id}/status` | ❌ | ❌ | ✅ |
+| `PATCH /api/v1/admin/accounts/{id}/status` | ❌ | ❌ | ✅ |
+
 ---
 
 ## Health Checks & Diagnostic Endpoints
@@ -353,7 +396,7 @@ Returns technical system runtime telemetry:
 
 | Service | Container Name | Image | Port | Description |
 | :--- | :--- | :--- | :--- | :--- |
-| **locallink-web** | `locallink-web` | Custom (Node 24 Alpine) | `3000:3000` | Nuxt 3 Frontend client |
+| **locallink-web** | `locallink-web` | Custom (Node 24 Alpine) | `3000:3000` | Nuxt 4 Frontend client |
 | **locallink-api** | `locallink-api` | Custom (ASP.NET 10.0) | `8080:8080` | ASP.NET Core REST API Gateway |
 | **locallink-sqlserver** | `locallink-sqlserver` | `mssql/server:2022-latest` | `1433:1433` | Microsoft SQL Server 2022 Engine |
 
@@ -364,7 +407,7 @@ Returns technical system runtime telemetry:
 - [x] **Milestone 1**: Project Foundation (Backend, Frontend, SQL Server 2022, Docker Compose) ✅
 - [x] **Milestone 2**: Database Design & Core Banking Schema (13 Entities, Migrations, Seeders) ✅
 - [x] **Milestone 3**: Authentication + JWT + Refresh Token + RBAC ✅
-- [ ] **Milestone 4**: Customer Management & Bank Accounts
+- [x] **Milestone 4**: Customer Management & Bank Accounts ✅
 - [ ] **Milestone 5**: Transfer Engine, Transactions & Audit Log
 - [ ] **Milestone 6**: Frontend Banking Dashboard UI
 - [ ] **Milestone 7**: Bill Payment System & Notifications

@@ -39,7 +39,7 @@
           Cloud-native Connected Regional Banking & Local Services Platform
         </p>
         <p class="hero-desc">
-          High-performance, modular foundation engineered with ASP.NET Core Web API, Entity Framework Core, SQL Server 2022, Nuxt 3, and Docker.
+          High-performance, modular foundation engineered with ASP.NET Core Web API, Entity Framework Core, SQL Server 2022, Nuxt 4, and Docker.
         </p>
       </section>
 
@@ -111,7 +111,7 @@
           </div>
           <div class="card-body">
             <div class="service-title">Web Application</div>
-            <div class="service-meta">Nuxt 3 + Vue 3 + Quasar + TS</div>
+            <div class="service-meta">Nuxt 4 + Vue 3 + Quasar + TS</div>
             <div class="status-indicator">
               <span class="pulse-indicator online"></span>
               <span class="status-text">Client: Connected</span>
@@ -189,20 +189,20 @@
             <div class="roadmap-name">Foundation & DevOps</div>
             <div class="roadmap-status">COMPLETED ✅</div>
           </div>
-          <div class="roadmap-card pending">
+          <div class="roadmap-card completed">
             <div class="roadmap-badge">Milestone 2</div>
             <div class="roadmap-name">Database Schema Design</div>
-            <div class="roadmap-status">Up Next ⏳</div>
+            <div class="roadmap-status">COMPLETED ✅</div>
           </div>
-          <div class="roadmap-card pending">
+          <div class="roadmap-card completed">
             <div class="roadmap-badge">Milestone 3</div>
             <div class="roadmap-name">Auth + JWT + RBAC</div>
-            <div class="roadmap-status">Planned ⏳</div>
+            <div class="roadmap-status">COMPLETED ✅</div>
           </div>
-          <div class="roadmap-card pending">
+          <div class="roadmap-card completed">
             <div class="roadmap-badge">Milestone 4</div>
             <div class="roadmap-name">Customer & Banking Accounts</div>
-            <div class="roadmap-status">Planned ⏳</div>
+            <div class="roadmap-status">COMPLETED ✅</div>
           </div>
         </div>
       </section>
@@ -211,7 +211,7 @@
     <!-- Footer -->
     <footer class="footer">
       <div>InterLink Banking — Cloud-native Connected Regional Banking & Local Services Platform</div>
-      <div class="q-mt-xs">Engineered with Clean Architecture, .NET 10, Nuxt 3 & Docker Orchestration</div>
+      <div class="q-mt-xs">Engineered with Clean Architecture, .NET 10, Nuxt 4 & Docker Orchestration</div>
     </footer>
   </div>
 </template>
