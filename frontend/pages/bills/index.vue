@@ -146,6 +146,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { formatCurrency } from '~/utils/currency'
 import { formatDate } from '~/utils/date'
+import { getBillStatusColor as getStatusColor, getBillStatusLabel as getStatusLabel } from '~/utils/status'
 import { useBillService } from '~/services/billService'
 import type { BillListItemDto } from '~/types/bill'
 

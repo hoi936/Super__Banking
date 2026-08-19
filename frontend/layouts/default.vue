@@ -32,9 +32,9 @@
           </q-avatar>
 
           <q-menu transition-show="jump-down" transition-hide="jump-up" class="bank-menu-popover">
-            <q-list style="min-width: 220px" class="q-py-sm">
+            <q-list style="min-width: 220px" class="q-py-sm text-dark bg-white">
               <q-item-label header class="text-weight-bold text-grey-8">Tài khoản</q-item-label>
-              <q-item clickable v-close-popup to="/profile">
+              <q-item clickable v-close-popup to="/profile" class="text-dark">
                 <q-item-section avatar>
                   <q-icon name="person_outline" />
                 </q-item-section>
