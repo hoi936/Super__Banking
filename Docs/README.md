@@ -322,6 +322,31 @@ Returns system status along with the health of each registered dependency:
 | `POST` | `/api/v1/beneficiaries` | `CUSTOMER` | Add beneficiary (blocks closed accounts, own account, and duplicates) |
 | `DELETE` | `/api/v1/beneficiaries/{id}` | `CUSTOMER` | Delete saved beneficiary (Ownership enforced) |
 
+### Transfer & Transaction Endpoints
+
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/v1/transfers` | `CUSTOMER` | Execute internal transfer (Atomic ACID transaction, `Idempotency-Key` header support) |
+| `GET` | `/api/v1/transfers` | `CUSTOMER` | List transfer history for current customer (SQL-level pagination & date filtering) |
+| `GET` | `/api/v1/transfers/{id}` | `CUSTOMER` | View transfer receipt detail (Ownership strictly enforced) |
+| `GET` | `/api/v1/transactions` | `CUSTOMER` | List transaction ledger records (debits/credits) for own accounts |
+| `GET` | `/api/v1/transactions/{id}` | `CUSTOMER` | View transaction ledger record detail (Ownership strictly enforced) |
+
+### Bill Payment & Notification Endpoints
+
+| Method | Endpoint | Access | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/v1/bills` | `CUSTOMER` | List utility bills for current customer (SQL pagination, status/type filters) |
+| `GET` | `/api/v1/bills/{id}` | `CUSTOMER` | View bill detail (Ownership strictly enforced) |
+| `POST` | `/api/v1/payments` | `CUSTOMER` | Pay utility bill (Server-controlled amount, atomic transaction, `Idempotency-Key` support) |
+| `GET` | `/api/v1/payments` | `CUSTOMER` | List bill payment history for current customer |
+| `GET` | `/api/v1/payments/{id}` | `CUSTOMER` | View bill payment receipt detail (Ownership strictly enforced) |
+| `GET` | `/api/v1/notifications` | `Authenticated` | List notifications for current user (sorted newest first, pagination) |
+| `GET` | `/api/v1/notifications/unread-count` | `Authenticated` | Get total count of unread notifications |
+| `GET` | `/api/v1/notifications/{id}` | `Authenticated` | View single notification detail (Ownership strictly enforced) |
+| `PATCH` | `/api/v1/notifications/{id}/read` | `Authenticated` | Mark single notification as read (Idempotent) |
+| `PATCH` | `/api/v1/notifications/read-all` | `Authenticated` | Mark all unread notifications of current user as read |
+
 ### Staff & Admin Management Endpoints
 
 | Method | Endpoint | Access | Description |
@@ -331,6 +356,36 @@ Returns system status along with the health of each registered dependency:
 | `GET` | `/api/v1/admin/customers/{id}/accounts` | `STAFF`, `ADMIN` | Read-only list of bank accounts for a specific customer |
 | `PATCH` | `/api/v1/admin/customers/{id}/status` | `ADMIN` | Change customer status (`ACTIVE` $\leftrightarrow$ `SUSPENDED`) + creates `AuditLog` |
 | `PATCH` | `/api/v1/admin/accounts/{id}/status` | `ADMIN` | Change account status (`ACTIVE` $\leftrightarrow$ `LOCKED`) + creates `AuditLog` |
+
+---
+
+## Financial Integrity & Transfer / Payment Architecture
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Customer as Customer (Client)
+    participant API as PaymentsController
+    participant Svc as PaymentService
+    participant DB as SQL Server (ACID Tx)
+
+    Customer->>API: POST /api/v1/payments (Idempotency-Key, billId, accountId)
+    API->>Svc: PayBillAsync(request, key, userId)
+    Svc->>DB: Check IdempotencyKey (Return cached receipt if duplicate)
+    Svc->>DB: Validate Bill ownership & Status = UNPAID/OVERDUE
+    Svc->>DB: Validate Account ownership, Active status, VND & Balance >= Bill.Amount
+    Note over Svc,DB: Begin Atomic Database Transaction
+    Svc->>DB: Debit Source Account (Balance -= Bill.Amount, RowVersion)
+    Svc->>DB: Insert Transaction Ledger record (PAY reference, Type = Payment)
+    Svc->>DB: Insert Payment record (with IdempotencyKey)
+    Svc->>DB: Update Bill (Status = PAID, UpdatedAtUtc)
+    Svc->>DB: Insert AuditLog (PAYMENT_COMPLETED)
+    Svc->>DB: Insert Notification (Type = Payment)
+    Svc->>DB: CommitAsync()
+    DB-->>Svc: Transaction Committed
+    Svc-->>API: PaymentReceiptDto
+    API-->>Customer: 201 Created (Receipt)
+```
 
 ---
 
@@ -346,6 +401,21 @@ Returns system status along with the health of each registered dependency:
 | `GET /api/v1/beneficiaries` | ✅ | ❌ | ❌ |
 | `POST /api/v1/beneficiaries` | ✅ | ❌ | ❌ |
 | `DELETE /api/v1/beneficiaries/{id}` | ✅ | ❌ | ❌ |
+| `POST /api/v1/transfers` | ✅ | ❌ | ❌ |
+| `GET /api/v1/transfers` | ✅ | ❌ | ❌ |
+| `GET /api/v1/transfers/{id}` | ✅ | ❌ | ❌ |
+| `GET /api/v1/transactions` | ✅ | ❌ | ❌ |
+| `GET /api/v1/transactions/{id}` | ✅ | ❌ | ❌ |
+| `GET /api/v1/bills` | ✅ | ❌ | ❌ |
+| `GET /api/v1/bills/{id}` | ✅ | ❌ | ❌ |
+| `POST /api/v1/payments` | ✅ | ❌ | ❌ |
+| `GET /api/v1/payments` | ✅ | ❌ | ❌ |
+| `GET /api/v1/payments/{id}` | ✅ | ❌ | ❌ |
+| `GET /api/v1/notifications` | ✅ | ✅ | ✅ |
+| `GET /api/v1/notifications/unread-count` | ✅ | ✅ | ✅ |
+| `GET /api/v1/notifications/{id}` | ✅ | ✅ | ✅ |
+| `PATCH /api/v1/notifications/{id}/read` | ✅ | ✅ | ✅ |
+| `PATCH /api/v1/notifications/read-all` | ✅ | ✅ | ✅ |
 | `GET /api/v1/admin/customers` | ❌ | ✅ | ✅ |
 | `GET /api/v1/admin/customers/{id}` | ❌ | ✅ | ✅ |
 | `GET /api/v1/admin/customers/{id}/accounts` | ❌ | ✅ | ✅ |
@@ -408,9 +478,9 @@ Returns technical system runtime telemetry:
 - [x] **Milestone 2**: Database Design & Core Banking Schema (13 Entities, Migrations, Seeders) ✅
 - [x] **Milestone 3**: Authentication + JWT + Refresh Token + RBAC ✅
 - [x] **Milestone 4**: Customer Management & Bank Accounts ✅
-- [ ] **Milestone 5**: Transfer Engine, Transactions & Audit Log
-- [ ] **Milestone 6**: Frontend Banking Dashboard UI
-- [ ] **Milestone 7**: Bill Payment System & Notifications
-- [ ] **Milestone 8**: Comprehensive Integration & Docker Testing
+- [x] **Milestone 5**: Transfer Engine, Transactions & Audit Log ✅
+- [x] **Milestone 6**: Bill Payment System & Notifications ✅
+- [x] **Milestone 7**: Staff/Admin Operations & Backend V1 Finalization ✅
+- [x] **Milestone 8**: Frontend UI (FE1: Auth & App Shell, FE2: Dashboard & Accounts) ✅
 - [ ] **Milestone 9**: Cloud Deployment (Azure) & CI/CD Pipelines
 - [ ] **Milestone 10**: Terraform Infrastructure as Code & Observability (Prometheus, Grafana)

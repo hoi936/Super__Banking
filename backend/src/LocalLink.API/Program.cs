@@ -4,14 +4,20 @@ using LocalLink.Infrastructure.DependencyInjection;
 using LocalLink.Infrastructure.Persistence;
 using LocalLink.Infrastructure.Persistence.Seeders;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 builder.Services.AddProblemDetails();
 builder.Services.AddAppCors(builder.Configuration);
 builder.Services.AddAppHealthChecks(builder.Configuration);
+builder.Services.AddAppRateLimiting();
 builder.Services.AddAppSwagger();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddAppAuthentication(builder.Configuration);
@@ -20,8 +26,11 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+app.UseMiddleware<SecurityHeadersMiddleware>();
 
 app.UseAppSwagger(app.Environment);
+
+app.UseRateLimiter();
 
 app.UseCors(CorsExtensions.CorsPolicyName);
 

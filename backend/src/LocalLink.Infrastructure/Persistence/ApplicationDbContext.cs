@@ -23,8 +23,14 @@ public class ApplicationDbContext : DbContext
     public DbSet<Transfer> Transfers => Set<Transfer>();
     public DbSet<Bill> Bills => Set<Bill>();
     public DbSet<Payment> Payments => Set<Payment>();
+    public DbSet<TermDeposit> TermDeposits => Set<TermDeposit>();
+    public DbSet<ExternalTransfer> ExternalTransfers => Set<ExternalTransfer>();
+    public DbSet<BankCard> Cards => Set<BankCard>();
+    public DbSet<LoanApplication> LoanApplications => Set<LoanApplication>();
+    public DbSet<MobileTopUp> MobileTopUps => Set<MobileTopUp>();
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    public DbSet<GatewayTransaction> GatewayTransactions => Set<GatewayTransaction>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

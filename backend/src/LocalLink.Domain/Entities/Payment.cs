@@ -18,6 +18,8 @@ public class Payment
     public decimal Amount { get; set; }
     public PaymentStatus Status { get; set; } = PaymentStatus.Pending;
 
+    public string? IdempotencyKey { get; set; }
+
     public DateTime? PaidAtUtc { get; set; }
     public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
 }

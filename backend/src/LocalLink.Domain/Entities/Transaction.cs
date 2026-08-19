@@ -25,4 +25,7 @@ public class Transaction
     // Navigation properties
     public virtual Transfer? Transfer { get; set; }
     public virtual Payment? Payment { get; set; }
+    public virtual ExternalTransfer? ExternalTransfer { get; set; }
+    public virtual LoanApplication? LoanApplication { get; set; }
+    public virtual MobileTopUp? MobileTopUp { get; set; }
 }

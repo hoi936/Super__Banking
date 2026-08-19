@@ -10,7 +10,7 @@
           <q-icon name="account_balance" size="32px" class="logo-icon" />
           <span class="logo-title">InterLink Banking</span>
         </div>
-        <div class="header-actions">
+        <div class="header-actions flex q-gutter-sm">
           <q-btn
             unelevated
             rounded
@@ -19,7 +19,25 @@
             color="primary"
             :loading="loading"
             class="refresh-btn"
-            @click="refreshData"
+            @click="checkStatus"
+          />
+          <q-btn
+            v-if="authStore.isAuthenticated"
+            unelevated
+            rounded
+            icon="dashboard"
+            label="Vào ứng dụng"
+            color="secondary"
+            @click="goToApp"
+          />
+          <q-btn
+            v-else
+            unelevated
+            rounded
+            icon="login"
+            label="Đăng nhập"
+            color="secondary"
+            to="/login"
           />
         </div>
       </div>
@@ -137,8 +155,8 @@
 
           <div class="telemetry-grid">
             <div class="telemetry-item">
-              <span class="telemetry-label">Application</span>
-              <span class="telemetry-value">{{ systemData?.application || 'LocalLink' }}</span>
+              <div class="telemetry-label text-caption text-grey-5">Application</div>
+              <span class="telemetry-value">{{ systemData?.application || 'InterLink Banking' }}</span>
             </div>
             <div class="telemetry-item">
               <span class="telemetry-label">Environment</span>
@@ -204,6 +222,16 @@
             <div class="roadmap-name">Customer & Banking Accounts</div>
             <div class="roadmap-status">COMPLETED ✅</div>
           </div>
+          <div class="roadmap-card completed">
+            <div class="roadmap-badge">Milestone 5</div>
+            <div class="roadmap-name">Transfer Engine & Integrity</div>
+            <div class="roadmap-status">COMPLETED ✅</div>
+          </div>
+          <div class="roadmap-card completed">
+            <div class="roadmap-badge">Milestone 6</div>
+            <div class="roadmap-name">Bill Payment & Notifications</div>
+            <div class="roadmap-status">COMPLETED ✅</div>
+          </div>
         </div>
       </section>
     </main>
@@ -218,10 +246,22 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { useApiClient } from '~/services/api'
+import { useAuthStore } from '~/stores/auth'
 import type { SystemStatus, HealthCheckResponse } from '~/types'
 
+const router = useRouter()
+const authStore = useAuthStore()
 const { baseUrl: apiBaseUrl, getSystemStatus, getHealthCheck } = useApiClient()
+
+const goToApp = () => {
+  if (authStore.hasRole('ADMIN') || authStore.hasRole('STAFF')) {
+    router.push('/admin')
+  } else {
+    router.push('/dashboard')
+  }
+}
 
 const loading = ref(false)
 const systemData = ref<SystemStatus | null>(null)

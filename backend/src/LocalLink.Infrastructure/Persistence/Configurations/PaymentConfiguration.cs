@@ -40,6 +40,15 @@ public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
             .HasMaxLength(30)
             .IsUnicode(false);
 
+        builder.Property(p => p.IdempotencyKey)
+            .IsRequired(false)
+            .HasMaxLength(100)
+            .IsUnicode(false);
+
+        builder.HasIndex(p => p.IdempotencyKey)
+            .IsUnique()
+            .HasFilter("[IdempotencyKey] IS NOT NULL");
+
         builder.Property(p => p.PaidAtUtc)
             .IsRequired(false);
 

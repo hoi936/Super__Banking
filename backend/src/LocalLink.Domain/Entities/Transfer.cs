@@ -17,6 +17,7 @@ public class Transfer
 
     public decimal Amount { get; set; }
     public string? Description { get; set; }
+    public string? IdempotencyKey { get; set; }
     public TransferStatus Status { get; set; } = TransferStatus.Pending;
 
     public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;

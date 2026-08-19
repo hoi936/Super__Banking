@@ -117,20 +117,20 @@ Hệ thống được tổ chức theo mô hình **Modular Monolith + Clean Arch
 
 - [x] **Milestone 1: Project Foundation & DevOps** ✅ *(Đã hoàn thành)*
   - Setup .NET 10 Web API Clean Architecture, Nuxt 3 Quasar Frontend, SQL Server 2022 Docker, Docker Compose, Health Check `/health`, Swagger `/swagger`, Persistence Volume.
-- [ ] **Milestone 2: Database Design & Core Banking Schema**
+- [x] **Milestone 2: Database Design & Core Banking Schema** ✅
   - Thiết kế quan hệ bảng CSDL hoàn chỉnh: Customer, Account, Transaction, Transfer, Bill, Provider, AuditLog, User, Role.
-- [ ] **Milestone 3: Authentication + JWT + Refresh Token + RBAC**
+- [x] **Milestone 3: Authentication + JWT + Refresh Token + RBAC** ✅
   - Đăng ký, đăng nhập, cấp phát JWT, middleware kiểm tra token và phân quyền.
-- [ ] **Milestone 4: Customer Management & Banking Accounts**
+- [x] **Milestone 4: Customer Management & Banking Accounts** ✅
   - Mở tài khoản, cấp phát số tài khoản, quản lý trạng thái và truy vấn số dư.
-- [ ] **Milestone 5: Transfer Engine, Transaction Ledger & Audit Logging**
+- [x] **Milestone 5: Transfer Engine, Transaction Ledger & Audit Logging** ✅
   - Logic chuyển khoản an toàn (ACID transaction, locking), sao kê và ghi audit log tự động.
-- [ ] **Milestone 6: Frontend Banking UI**
-  - Xây dựng giao diện Web Banking đầy đủ với Quasar components (Dashboard, Chuyển tiền, Lịch sử giao dịch).
-- [ ] **Milestone 7: Bill Payment System & Notifications**
+- [x] **Milestone 6: Frontend Banking UI (M6 Backend: Bills/Notifications)** ✅
   - Tính năng thanh toán hóa đơn dịch vụ địa phương và thông báo biến động số dư.
-- [ ] **Milestone 8: Docker Testing Improvements & Stress Testing**
-  - Tối ưu hóa hiệu năng container, kịch bản test chịu tải và concurrency test.
+- [x] **Milestone 7: Staff/Admin & Backend V1 Finalization** ✅
+  - Cổng API quản trị, Audit logging, Khóa tài khoản, Finalize Backend V1.
+- [x] **Milestone 8: Frontend UI (FE1 & FE2)** ✅
+  - Xây dựng giao diện Web Banking đầy đủ với Quasar components (Auth, Dashboard, Accounts, Profile).
 - [ ] **Milestone 9: Cloud Deployment (Azure) & CI/CD Pipelines**
   - Tích hợp GitHub Actions CI/CD và chuẩn bị deploy lên Microsoft Azure Cloud.
 - [ ] **Milestone 10: Infrastructure as Code (Terraform) & Monitoring (Prometheus/Grafana)**
