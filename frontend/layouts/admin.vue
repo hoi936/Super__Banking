@@ -86,6 +86,13 @@
             <q-item-section>Thanh toán hóa đơn</q-item-section>
           </q-item>
 
+          <q-item clickable v-ripple to="/admin/loans" active-class="admin-nav-active">
+            <q-item-section avatar>
+              <q-icon name="request_quote" />
+            </q-item-section>
+            <q-item-section>Hồ sơ vay vốn</q-item-section>
+          </q-item>
+
           <template v-if="authStore.hasRole('ADMIN')">
             <q-separator dark class="admin-nav-separator" />
             <q-item-label header>Quản lý hệ thống</q-item-label>

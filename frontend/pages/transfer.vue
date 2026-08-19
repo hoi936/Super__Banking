@@ -319,11 +319,42 @@ onMounted(async () => {
   await loadAccounts()
   await loadBeneficiaries()
 
-  const querySource = route.query.sourceAccount as string
+  const querySource = getQueryValue(route.query.sourceAccount)
   if (querySource && activeAccounts.value.find(a => a.id === querySource)) {
     sourceAccountId.value = querySource
+  } else if (!sourceAccountId.value && activeAccounts.value.length > 0) {
+    sourceAccountId.value = activeAccounts.value[0].id
+  }
+
+  const queryDestination = getQueryValue(route.query.destinationAccount)
+  const queryAmount = getQueryValue(route.query.amount)
+  const queryDescription = getQueryValue(route.query.description)
+
+  if (queryDestination) {
+    destinationAccountNumber.value = queryDestination
+  }
+
+  if (queryAmount) {
+    const parsedAmount = Number(queryAmount)
+    amount.value = Number.isFinite(parsedAmount) && parsedAmount > 0 ? parsedAmount : null
+  }
+
+  if (queryDescription) {
+    description.value = queryDescription
+  }
+
+  if (destinationAccountNumber.value) {
+    await lookupDestination()
   }
 })
+
+const getQueryValue = (value: unknown) => {
+  if (Array.isArray(value)) {
+    return value[0] ? String(value[0]) : ''
+  }
+
+  return value ? String(value) : ''
+}
 
 const loadAccounts = async () => {
   try {

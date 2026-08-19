@@ -23,4 +23,7 @@ public class Customer
     public virtual ICollection<BankAccount> BankAccounts { get; set; } = new List<BankAccount>();
     public virtual ICollection<Beneficiary> Beneficiaries { get; set; } = new List<Beneficiary>();
     public virtual ICollection<Bill> Bills { get; set; } = new List<Bill>();
+    public virtual ICollection<BankCard> Cards { get; set; } = new List<BankCard>();
+    public virtual ICollection<LoanApplication> LoanApplications { get; set; } = new List<LoanApplication>();
+    public virtual ICollection<MobileTopUp> MobileTopUps { get; set; } = new List<MobileTopUp>();
 }

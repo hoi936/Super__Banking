@@ -40,37 +40,33 @@ V2 mở rộng LocalLink từ ngân hàng số cơ bản của V1 thành nền t
 2. QR Pay
    - Tạo QR nhận tiền cá nhân.
    - Parse QR chuẩn VietQR ở mức demo để điền nhanh form chuyển tiền.
+   - Foundation đã triển khai API tạo/parse payload, màn hình `/qr-pay` và prefill sang chuyển khoản nội bộ.
 
 3. Payment Gateway
    - Adapter giả lập VNPay/Momo/Stripe.
    - Luồng tạo payment intent, callback, đối soát và nạp tiền vào tài khoản.
 
-## Phase 3 - Experience & Loyalty
-1. PFM
-   - API thống kê chi tiêu theo tháng, loại giao dịch và tài khoản.
-   - Biểu đồ pie/bar trên dashboard khách hàng.
-
-2. Dark Mode
-   - Toggle toàn hệ thống.
-   - Lưu lựa chọn ở local storage.
-
-3. Rewards
-   - Cộng điểm khi thanh toán hóa đơn.
-   - Danh mục voucher và đổi điểm.
-
-## Phase 4 - Admin & Ops
-1. Maker-Checker
-   - Giao dịch lớn hơn 500.000.000 VND chuyển sang trạng thái chờ duyệt.
-   - Staff tạo yêu cầu, Admin duyệt/từ chối.
-
-2. Advanced Analytics
-   - Báo cáo dòng tiền, khách hàng mới, sản phẩm mới.
-   - Xuất Excel/PDF theo khoảng thời gian.
+> **Lưu ý:** Các chức năng thuộc Phase 3 (PFM, Dark Mode, Rewards) và Phase 4 (Maker-Checker, Advanced Analytics) đã được dời sang lộ trình [V3_ROADMAP.md](./V3_ROADMAP.md) để tập trung hoàn thiện và đóng gói phiên bản V2.
 
 ## Lát cắt triển khai đầu tiên
-Module đầu tiên của V2 là Term Deposits backend foundation:
+Module đầu tiên của V2 là Term Deposits:
 - Domain entity `TermDeposit`.
 - Enum trạng thái/kỳ hạn.
 - DTO và service mở sổ, xem danh sách, xem chi tiết, tất toán khi đến hạn.
 - API `/api/v1/term-deposits`.
-- EF configuration và DbSet.
+- EF configuration, DbSet và migration `AddTermDeposits`.
+- Frontend service, type contract, menu khách hàng và trang `/term-deposits` để mở sổ/tra cứu danh sách.
+
+## Trạng thái triển khai
+- `2026-08-19`: Hoàn tất foundation Term Deposits backend và màn hình khách hàng cơ bản.
+- `2026-08-19`: Hoàn tất foundation Napas 24/7 simulation: ngân hàng ngoài giả lập, lookup người nhận, chuyển liên ngân hàng có phí, ledger, audit, notification và màn hình `/napas`.
+- `2026-08-19`: Hoàn tất foundation Cards: bảng thẻ, seed thẻ demo, API danh sách/khóa/mở/cập nhật hạn mức/settings và màn hình `/cards` với thẻ 3D.
+- `2026-08-19`: Hoàn tất foundation Loans: khách hàng nộp hồ sơ vay tại `/loans`, admin duyệt/từ chối tại `/admin/loans`, giải ngân tự động vào tài khoản khi duyệt, ledger/audit/notification đầy đủ.
+- `2026-08-19`: Hoàn tất foundation Mobile Top-up: adapter nhà mạng giả lập, danh mục gói nạp tiền/mã thẻ/data, debit tài khoản, ledger/audit/notification/idempotency và màn hình `/mobile-topup`.
+- `2026-08-19`: Hoàn tất foundation QR Pay: API `/api/v1/qr-pay/receive-payload`, `/api/v1/qr-pay/parse`, màn hình `/qr-pay`, tạo QR nhận tiền LocalLink, parse payload LocalBank/VietQR demo và chuyển tiếp sang `/transfer` hoặc `/napas`.
+- `2026-08-19`: **[NEW]** Hoàn tất Cổng thanh toán (Payment Gateway): tích hợp nạp tiền từ VNPay/Momo/Stripe, tạo Webhook xử lý Callback, giao diện `/deposit` và luồng giả lập thanh toán.
+- Đã kiểm tra build backend, EF không còn pending model changes.
+- Đã kiểm tra build frontend Nuxt.
+- Đã smoke test API health và toàn bộ các routes/components của V2.
+
+**=> V2 ĐÃ HOÀN TẤT TOÀN BỘ CÁC MỤC TIÊU PHASE 1 & PHASE 2.**

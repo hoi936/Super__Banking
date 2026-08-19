@@ -28,4 +28,8 @@ public class BankAccount
     public virtual ICollection<Transfer> DestinationTransfers { get; set; } = new List<Transfer>();
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
     public virtual ICollection<TermDeposit> TermDeposits { get; set; } = new List<TermDeposit>();
+    public virtual ICollection<ExternalTransfer> ExternalTransfers { get; set; } = new List<ExternalTransfer>();
+    public virtual ICollection<BankCard> Cards { get; set; } = new List<BankCard>();
+    public virtual ICollection<LoanApplication> LoanApplications { get; set; } = new List<LoanApplication>();
+    public virtual ICollection<MobileTopUp> MobileTopUps { get; set; } = new List<MobileTopUp>();
 }

@@ -313,6 +313,57 @@ public static class DatabaseSeeder
             }
         }
 
+        var cus1PrimaryAccount = await context.BankAccounts.FirstOrDefaultAsync(a => a.AccountNumber == "1000000001");
+        if (cus1 != null && cus1PrimaryAccount != null && !await context.Cards.AnyAsync(c => c.CardNumberMasked == "9704 36** **** 7890"))
+        {
+            context.Cards.Add(new BankCard
+            {
+                Id = Guid.NewGuid(),
+                CustomerId = cus1.Id,
+                LinkedAccountId = cus1PrimaryAccount.Id,
+                CardNumberMasked = "9704 36** **** 7890",
+                LastFourDigits = "7890",
+                CardholderName = "NGUYEN VAN AN",
+                CardType = CardType.Debit,
+                Status = CardStatus.Active,
+                DailyLimit = 5000000m,
+                MonthlyLimit = 50000000m,
+                Currency = "VND",
+                OnlinePaymentEnabled = true,
+                ContactlessEnabled = true,
+                ExpiryMonth = 12,
+                ExpiryYear = 2030,
+                IssuedAtUtc = DateTime.UtcNow.AddMonths(-8),
+                CreatedAtUtc = DateTime.UtcNow
+            });
+            logger.LogInformation("Seeded demo debit card for Customer 1.");
+        }
+
+        if (cus1 != null && cus1PrimaryAccount != null && !await context.Cards.AnyAsync(c => c.CardNumberMasked == "4563 12** **** 1122"))
+        {
+            context.Cards.Add(new BankCard
+            {
+                Id = Guid.NewGuid(),
+                CustomerId = cus1.Id,
+                LinkedAccountId = cus1PrimaryAccount.Id,
+                CardNumberMasked = "4563 12** **** 1122",
+                LastFourDigits = "1122",
+                CardholderName = "NGUYEN VAN AN",
+                CardType = CardType.Credit,
+                Status = CardStatus.Locked,
+                DailyLimit = 10000000m,
+                MonthlyLimit = 100000000m,
+                Currency = "VND",
+                OnlinePaymentEnabled = false,
+                ContactlessEnabled = true,
+                ExpiryMonth = 10,
+                ExpiryYear = 2031,
+                IssuedAtUtc = DateTime.UtcNow.AddMonths(-2),
+                CreatedAtUtc = DateTime.UtcNow
+            });
+            logger.LogInformation("Seeded demo credit card for Customer 1.");
+        }
+
         await context.SaveChangesAsync();
         
         // 6. Bulk Data Generation (20 Customers, Accounts, Bills, and Transactions)

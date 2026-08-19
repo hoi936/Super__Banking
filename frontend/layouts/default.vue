@@ -77,11 +77,39 @@
             <q-item-section>Tài khoản</q-item-section>
           </q-item>
 
+          <q-item clickable v-ripple to="/term-deposits" active-class="bank-nav-active">
+            <q-item-section avatar>
+              <q-icon name="savings" />
+            </q-item-section>
+            <q-item-section>Tiết kiệm</q-item-section>
+          </q-item>
+
+          <q-item clickable v-ripple to="/cards" active-class="bank-nav-active">
+            <q-item-section avatar>
+              <q-icon name="credit_card" />
+            </q-item-section>
+            <q-item-section>Thẻ</q-item-section>
+          </q-item>
+
+          <q-item clickable v-ripple to="/loans" active-class="bank-nav-active">
+            <q-item-section avatar>
+              <q-icon name="request_quote" />
+            </q-item-section>
+            <q-item-section>Vay vốn</q-item-section>
+          </q-item>
+
           <q-item clickable v-ripple to="/transfer" active-class="bank-nav-active">
             <q-item-section avatar>
               <q-icon name="swap_horiz" />
             </q-item-section>
             <q-item-section>Chuyển tiền</q-item-section>
+          </q-item>
+
+          <q-item clickable v-ripple to="/napas" active-class="bank-nav-active">
+            <q-item-section avatar>
+              <q-icon name="public" />
+            </q-item-section>
+            <q-item-section>Liên ngân hàng</q-item-section>
           </q-item>
 
           <q-item clickable v-ripple to="/transactions" active-class="bank-nav-active">
@@ -99,6 +127,27 @@
               <q-icon name="receipt" />
             </q-item-section>
             <q-item-section>Hóa đơn</q-item-section>
+          </q-item>
+
+          <q-item clickable v-ripple to="/deposit" active-class="bank-nav-active">
+            <q-item-section avatar>
+              <q-icon name="account_balance_wallet" />
+            </q-item-section>
+            <q-item-section>Nạp tiền</q-item-section>
+          </q-item>
+
+          <q-item clickable v-ripple to="/mobile-topup" active-class="bank-nav-active">
+            <q-item-section avatar>
+              <q-icon name="phone_iphone" />
+            </q-item-section>
+            <q-item-section>Nạp điện thoại</q-item-section>
+          </q-item>
+
+          <q-item clickable v-ripple to="/qr-pay" active-class="bank-nav-active">
+            <q-item-section avatar>
+              <q-icon name="qr_code_scanner" />
+            </q-item-section>
+            <q-item-section>QR Pay</q-item-section>
           </q-item>
 
           <q-item clickable v-ripple to="/payments" active-class="bank-nav-active">
