@@ -1,15 +1,18 @@
 <template>
-  <div class="q-pa-md">
-    <div class="row items-center justify-between q-mb-md">
+  <div class="admin-page">
+    <div class="admin-page-header">
       <div class="row items-center">
-        <q-btn flat round dense icon="arrow_back" @click="router.back()" class="q-mr-sm" />
-        <div class="text-h5 text-weight-bold">Chi tiết Thanh toán</div>
+        <q-btn flat round dense icon="arrow_back" @click="router.back()" class="admin-soft-btn q-mr-sm" />
+        <div>
+          <div class="admin-page-kicker">Dịch vụ tiện ích</div>
+          <div class="admin-page-title">Chi tiết thanh toán</div>
+          <div class="admin-page-subtitle">Kiểm tra nhà cung cấp, hóa đơn, tài khoản trích tiền và giao dịch liên kết.</div>
+        </div>
       </div>
-      <q-btn flat color="primary" icon="refresh" label="Làm mới" @click="fetchPayment" />
+      <q-btn unelevated color="primary" icon="refresh" label="Làm mới" class="admin-action-btn" @click="fetchPayment" />
     </div>
 
-    <!-- Error state -->
-    <q-banner v-if="hasError" inline-actions rounded class="bg-negative text-white q-mb-md">
+    <q-banner v-if="hasError" inline-actions rounded class="bg-red-1 text-negative q-mb-md">
       Có lỗi xảy ra khi tải dữ liệu. {{ errorMessage }}
       <template v-slot:action>
         <q-btn flat label="Thử lại" @click="fetchPayment" />
@@ -18,7 +21,7 @@
 
     <!-- Skeleton Loading -->
     <div v-if="isLoading">
-      <q-card flat bordered class="q-mb-md">
+      <q-card flat class="admin-card q-mb-md">
         <q-card-section>
           <q-skeleton type="text" width="30%" class="text-h6" />
           <q-skeleton type="text" width="60%" class="q-mt-md" />
@@ -28,28 +31,27 @@
     </div>
 
     <template v-else-if="payment">
-      <div class="row q-col-gutter-md">
-        <!-- Thông tin hóa đơn / thanh toán -->
+      <div class="admin-detail-grid">
         <div class="col-12 col-md-6">
-          <q-card flat bordered class="h-100">
+          <q-card flat class="admin-card admin-detail-card">
             <q-card-section>
-              <div class="text-h6 q-mb-md">Thông tin Hóa đơn</div>
+              <div class="admin-detail-title">Thông tin hóa đơn</div>
               
-              <div class="flex flex-center q-mb-lg">
+              <div class="admin-money-panel q-mb-lg">
                 <div class="text-center">
                   <div class="text-subtitle1 text-grey-7">Số tiền thanh toán</div>
                   <div class="text-h3 text-weight-bold text-orange-8">
                     {{ formatCurrency(payment.amount, payment.currency) }}
                   </div>
                   <div class="q-mt-sm">
-                    <q-badge :color="getStatusColor(payment.status)">
+                    <q-badge :color="getStatusColor(payment.status)" class="admin-chip">
                       {{ getStatusLabel(payment.status) }}
                     </q-badge>
                   </div>
                 </div>
               </div>
 
-              <q-list dense>
+              <q-list dense class="admin-kv-list">
                 <q-item>
                   <q-item-section>
                     <q-item-label caption>Nhà cung cấp</q-item-label>
@@ -84,13 +86,12 @@
           </q-card>
         </div>
 
-        <!-- Thông tin Giao dịch / Khách hàng -->
         <div class="col-12 col-md-6">
-          <q-card flat bordered class="h-100">
+          <q-card flat class="admin-card admin-detail-card">
             <q-card-section>
-              <div class="text-h6 q-mb-md">Thông tin Giao dịch</div>
+              <div class="admin-detail-title">Thông tin giao dịch</div>
               
-              <q-list dense>
+              <q-list dense class="admin-kv-list">
                 <q-item>
                   <q-item-section>
                     <q-item-label caption>Khách hàng thanh toán</q-item-label>

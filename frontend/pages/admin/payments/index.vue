@@ -1,33 +1,42 @@
 <template>
-  <div class="q-pa-md">
-    <div class="row items-center justify-between q-mb-md">
-      <div class="text-h5 text-weight-bold">Quản lý Thanh toán Hóa đơn</div>
+  <div class="admin-page">
+    <div class="admin-page-header">
+      <div>
+        <div class="admin-page-kicker">Dịch vụ tiện ích</div>
+        <div class="admin-page-title">Quản lý thanh toán hóa đơn</div>
+        <div class="admin-page-subtitle">Theo dõi thanh toán, nhà cung cấp, mã hóa đơn và trạng thái xử lý dịch vụ.</div>
+      </div>
     </div>
 
-    <q-card flat bordered class="q-mb-md">
-      <q-card-section>
-        <div class="row q-col-gutter-md">
-          <div class="col-12 col-sm-4 col-md-3">
+    <q-card flat class="admin-filter-card q-mb-lg">
+      <q-card-section class="q-pa-lg">
+        <div class="row q-col-gutter-md items-center">
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="admin-field-label">Mã thanh toán</div>
             <q-input 
               v-model="filters.reference" 
               outlined 
               dense 
-              placeholder="Tìm mã thanh toán" 
+              placeholder="Nhập mã thanh toán..." 
+              bg-color="grey-1"
               clearable
               @keyup.enter="fetchPayments"
             >
-              <template v-slot:append>
-                <q-icon name="search" @click="fetchPayments" class="cursor-pointer" />
+              <template v-slot:prepend>
+                <q-icon name="search" color="primary" />
               </template>
             </q-input>
           </div>
-          <div class="col-12 col-sm-4 col-md-2">
+          <div class="col-12 col-sm-6 col-md-2">
+            <div class="admin-field-label">Dịch vụ</div>
             <q-select
+              popup-content-class="text-dark bg-white shadow-2"
+              options-selected-class="text-primary text-weight-bold"
               v-model="filters.billType"
               outlined
               dense
               :options="billTypeOptions"
-              label="Loại hóa đơn"
+              bg-color="grey-1"
               clearable
               emit-value
               map-options
@@ -35,38 +44,44 @@
             />
           </div>
           <div class="col-12 col-sm-4 col-md-2">
+            <div class="admin-field-label">Trạng thái</div>
             <q-select
+              popup-content-class="text-dark bg-white shadow-2"
+              options-selected-class="text-primary text-weight-bold"
               v-model="filters.status"
               outlined
               dense
               :options="statusOptions"
-              label="Trạng thái"
+              bg-color="grey-1"
               clearable
               emit-value
               map-options
               @update:model-value="fetchPayments"
             />
           </div>
-          <div class="col-12 col-sm-6 col-md-2">
-            <q-input outlined dense v-model="filters.fromDate" label="Từ ngày" type="date" clearable @change="fetchPayments" />
+          <div class="col-12 col-sm-4 col-md-2">
+            <div class="admin-field-label">Từ ngày</div>
+            <q-input outlined dense v-model="filters.fromDate" type="date" bg-color="grey-1" clearable @change="fetchPayments" />
           </div>
-          <div class="col-12 col-sm-6 col-md-2">
-            <q-input outlined dense v-model="filters.toDate" label="Đến ngày" type="date" clearable @change="fetchPayments" />
+          <div class="col-12 col-sm-4 col-md-2">
+            <div class="admin-field-label">Đến ngày</div>
+            <q-input outlined dense v-model="filters.toDate" type="date" bg-color="grey-1" clearable @change="fetchPayments" />
           </div>
-          <div class="col-12 col-md-1 flex items-center justify-end">
-             <q-btn color="primary" icon="refresh" label="Làm mới" @click="fetchPayments" class="full-width" />
+          <div class="col-12 col-md-1 flex items-center justify-end" style="margin-top: 32px">
+             <q-btn unelevated color="primary" icon="refresh" @click="fetchPayments" class="admin-action-btn full-width" padding="8px" />
           </div>
         </div>
         
         <!-- Validation Error -->
-        <div v-if="dateValidationError" class="text-negative q-mt-sm">
-          Ngày bắt đầu không được lớn hơn ngày kết thúc.
+        <div v-if="dateValidationError" class="text-negative q-mt-sm row items-center">
+          <q-icon name="error" class="q-mr-xs" /> Ngày bắt đầu không được lớn hơn ngày kết thúc.
         </div>
       </q-card-section>
     </q-card>
 
-    <q-card flat bordered>
+    <q-card flat class="admin-card admin-table-card">
       <q-table
+        class="premium-table"
         :rows="payments"
         :columns="columns"
         row-key="id"
@@ -74,8 +89,14 @@
         v-model:pagination="pagination"
         @request="onRequest"
         flat
-        bordered
+        :rows-per-page-options="[10, 20, 50]"
       >
+        <template v-slot:body-cell-paymentReference="props">
+          <q-td :props="props">
+            <span class="text-weight-bold text-dark">{{ props.row.paymentReference }}</span>
+          </q-td>
+        </template>
+
         <template v-slot:body-cell-amount="props">
           <q-td :props="props" class="text-weight-bold text-orange-8">
             {{ formatCurrency(props.row.amount, props.row.currency) }}
@@ -85,22 +106,41 @@
         <template v-slot:body-cell-billType="props">
           <q-td :props="props">
             <div class="row items-center no-wrap">
-              <q-icon :name="getBillTypeIcon(props.row.billType)" size="sm" class="q-mr-xs text-grey-7" />
-              <span>{{ getBillTypeLabel(props.row.billType) }}</span>
+              <q-avatar size="28px" color="blue-1" text-color="primary" class="q-mr-sm">
+                <q-icon :name="getBillTypeIcon(props.row.billType)" size="xs" />
+              </q-avatar>
+              <span class="text-weight-medium">{{ getBillTypeLabel(props.row.billType) }}</span>
             </div>
+          </q-td>
+        </template>
+
+        <template v-slot:body-cell-billNumber="props">
+          <q-td :props="props" class="text-grey-8 font-monospace">
+            {{ props.row.billNumber }}
+          </q-td>
+        </template>
+
+        <template v-slot:body-cell-accountNumber="props">
+          <q-td :props="props" class="text-grey-8 font-monospace">
+            {{ props.row.accountNumber }}
           </q-td>
         </template>
 
         <template v-slot:body-cell-status="props">
           <q-td :props="props">
-            <q-badge :color="getStatusColor(props.row.status)">
+            <q-chip 
+              :color="getStatusColor(props.row.status) + '-1'" 
+              :text-color="getStatusColor(props.row.status)"
+              size="sm"
+              class="admin-chip"
+            >
               {{ getStatusLabel(props.row.status) }}
-            </q-badge>
+            </q-chip>
           </q-td>
         </template>
         
         <template v-slot:body-cell-createdAtUtc="props">
-          <q-td :props="props">
+          <q-td :props="props" class="text-grey-7 text-caption text-weight-medium">
             {{ formatDateTime(props.row.createdAtUtc) }}
           </q-td>
         </template>
@@ -108,22 +148,26 @@
         <template v-slot:body-cell-actions="props">
           <q-td :props="props" class="text-right">
             <q-btn
-              flat
+              unelevated
               round
               color="primary"
-              icon="visibility"
+              icon="chevron_right"
               size="sm"
+              class="bg-blue-1 text-primary"
               :to="`/admin/payments/${props.row.id}`"
             >
-              <q-tooltip>Xem chi tiết</q-tooltip>
+              <q-tooltip class="bg-dark">Xem chi tiết</q-tooltip>
             </q-btn>
           </q-td>
         </template>
 
         <template v-slot:no-data>
-          <div class="full-width row flex-center text-accent q-pa-md">
-            <q-icon size="2em" name="sentiment_dissatisfied" />
-            <span class="q-ml-sm">Không tìm thấy thanh toán.</span>
+          <div class="full-width row flex-center text-grey-5 q-pa-xl">
+            <div class="text-center">
+              <q-icon size="4em" name="account_balance_wallet" class="q-mb-md opacity-30" />
+              <div class="text-h6 text-weight-medium">Không có dữ liệu thanh toán</div>
+              <div class="text-caption">Chưa có giao dịch thanh toán hóa đơn nào phù hợp</div>
+            </div>
           </div>
         </template>
       </q-table>
@@ -153,16 +197,16 @@ const isLoading = ref(false)
 const payments = ref<AdminPaymentListItemDto[]>([])
 
 const billTypeOptions = [
-  { label: 'Tất cả', value: null },
-  { label: 'Điện', value: 'ELECTRICITY' },
-  { label: 'Nước', value: 'WATER' },
+  { label: 'Tất cả dịch vụ', value: null },
+  { label: 'Điện lực', value: 'ELECTRICITY' },
+  { label: 'Cấp nước', value: 'WATER' },
   { label: 'Internet', value: 'INTERNET' },
   { label: 'Giáo dục', value: 'EDUCATION' },
   { label: 'Khác', value: 'OTHER' }
 ]
 
 const statusOptions = [
-  { label: 'Tất cả', value: null },
+  { label: 'Tất cả trạng thái', value: null },
   { label: 'Thành công', value: 'COMPLETED' },
   { label: 'Chờ xử lý', value: 'PENDING' },
   { label: 'Thất bại', value: 'FAILED' }
@@ -197,7 +241,7 @@ const columns = [
   { name: 'amount', label: 'Số tiền', field: 'amount', align: 'right' as const, sortable: false },
   { name: 'status', label: 'Trạng thái', field: 'status', align: 'center' as const, sortable: false },
   { name: 'createdAtUtc', label: 'Thời gian', field: 'createdAtUtc', align: 'left' as const, sortable: false },
-  { name: 'actions', label: 'Thao tác', field: 'actions', align: 'right' as const, sortable: false }
+  { name: 'actions', label: '', field: 'actions', align: 'right' as const, sortable: false }
 ]
 
 const fetchPayments = async (props?: any) => {
@@ -270,3 +314,9 @@ onMounted(() => {
   fetchPayments()
 })
 </script>
+
+<style scoped>
+.font-monospace {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+</style>

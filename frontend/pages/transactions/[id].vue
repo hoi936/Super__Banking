@@ -1,8 +1,14 @@
 <template>
-  <div class="q-pa-md max-width-800 q-mx-auto">
-    <div class="row items-center q-mb-md">
-      <q-btn flat round dense icon="arrow_back" color="primary" @click="goBack" class="q-mr-sm" />
-      <div class="text-h6 text-primary">Chi tiết giao dịch</div>
+  <div class="bank-page-narrow">
+    <div class="bank-page-header">
+      <div class="row items-center">
+        <q-btn flat round dense icon="arrow_back" class="bank-soft-btn q-mr-sm" @click="goBack" />
+        <div>
+          <div class="bank-page-kicker">Dòng tiền cá nhân</div>
+          <div class="bank-page-title">Chi tiết giao dịch</div>
+          <div class="bank-page-subtitle">Thông tin tham chiếu, tài khoản liên quan và thời gian xử lý.</div>
+        </div>
+      </div>
     </div>
 
     <div v-if="isLoading" class="text-center q-pa-xl">
@@ -11,19 +17,21 @@
 
     <AppAlert v-else-if="error" :message="error" type="error" />
 
-    <q-card v-else-if="transaction" flat bordered class="bg-white">
-      <q-card-section class="text-center q-pb-none">
+    <q-card v-else-if="transaction" flat class="bank-card">
+      <q-card-section>
+        <div class="bank-money-panel">
         <div class="text-subtitle1 text-grey-8">{{ transaction.transactionType }}</div>
         <div :class="['text-h4 text-weight-bold q-my-md', getAmountColor(transaction)]">
           {{ getAmountPrefix(transaction) }}{{ formatCurrency(transaction.amount) }}
         </div>
-        <q-chip :color="getStatusColor(transaction.status)" text-color="white">
-          {{ transaction.status }}
+        <q-chip :color="getStatusColor(transaction.status)" text-color="white" class="bank-chip">
+          {{ getStatusLabel(transaction.status) }}
         </q-chip>
+        </div>
       </q-card-section>
 
       <q-card-section>
-        <q-list separator>
+        <q-list separator class="bank-kv-list">
           <q-item>
             <q-item-section>
               <q-item-label caption>Mã tham chiếu</q-item-label>
@@ -165,7 +173,4 @@ const getAmountPrefix = (tx: TransactionDetail) => {
 </script>
 
 <style scoped>
-.max-width-800 {
-  max-width: 800px;
-}
 </style>

@@ -314,6 +314,102 @@ public static class DatabaseSeeder
         }
 
         await context.SaveChangesAsync();
-        logger.LogInformation("Database seeding completed successfully.");
+        
+        // 6. Bulk Data Generation (20 Customers, Accounts, Bills, and Transactions)
+        logger.LogInformation("Starting bulk data generation...");
+        var random = new Random(42); // fixed seed for consistency
+        var customerRole = roleMap["CUSTOMER"];
+
+        for (int i = 3; i <= 22; i++)
+        {
+            var email = $"customer{i}@locallink.local";
+            var cusCode = $"CUS{i:D6}";
+            var accNum = $"10000000{i:D2}";
+            
+            if (!await context.Users.AnyAsync(u => u.Email == email))
+            {
+                // Create User
+                var user = new User
+                {
+                    Id = Guid.NewGuid(),
+                    Email = email,
+                    Status = UserStatus.Active,
+                    CreatedAtUtc = DateTime.UtcNow
+                };
+                user.PasswordHash = passwordHasher.HashPassword(user, DevDemoPassword);
+                user.UserRoles.Add(new UserRole { UserId = user.Id, RoleId = customerRole.Id, CreatedAtUtc = DateTime.UtcNow });
+                
+                // Create Customer
+                var customer = new Customer
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = user.Id,
+                    CustomerCode = cusCode,
+                    FullName = $"Khach Hang {i}",
+                    DateOfBirth = new DateOnly(1990 + random.Next(0, 15), random.Next(1, 13), random.Next(1, 28)),
+                    Gender = i % 2 == 0 ? "Male" : "Female",
+                    PhoneNumber = $"09{random.Next(10000000, 99999999)}",
+                    Address = $"{random.Next(1, 999)} Duong So {random.Next(1, 20)}, TP.HCM",
+                    Status = CustomerStatus.Active,
+                    CreatedAtUtc = DateTime.UtcNow
+                };
+
+                // Create Account
+                var account = new BankAccount
+                {
+                    Id = Guid.NewGuid(),
+                    CustomerId = customer.Id,
+                    AccountNumber = accNum,
+                    AccountName = $"Khach Hang {i} - Checking",
+                    AccountType = AccountType.Checking,
+                    Balance = random.Next(5, 50) * 1000000m,
+                    Currency = "VND",
+                    Status = AccountStatus.Active,
+                    CreatedAtUtc = DateTime.UtcNow
+                };
+                
+                customer.BankAccounts.Add(account);
+                user.Customer = customer;
+                context.Users.Add(user);
+
+                // Create Bills
+                var providers = new[] { "Da Nang Water", "Da Nang Electricity", "VNPT Internet", "Viettel Post" };
+                var types = new[] { BillType.Water, BillType.Electricity, BillType.Internet, BillType.Other };
+                for (int b = 0; b < 3; b++)
+                {
+                    var pIndex = random.Next(providers.Length);
+                    context.Bills.Add(new Bill
+                    {
+                        Id = Guid.NewGuid(),
+                        CustomerId = customer.Id,
+                        ProviderName = providers[pIndex],
+                        BillType = types[pIndex],
+                        BillNumber = $"BILL-{2026}-{i:D3}-{b}",
+                        Amount = random.Next(5, 50) * 10000m,
+                        DueDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(random.Next(5, 30))),
+                        Status = BillStatus.Unpaid,
+                        CreatedAtUtc = DateTime.UtcNow
+                    });
+                }
+                
+                // Create some fake transactions for today
+                var tx = new Transaction
+                {
+                    Id = Guid.NewGuid(),
+                    DestinationAccountId = account.Id,
+                    TransactionType = TransactionType.Deposit,
+                    Amount = random.Next(1, 10) * 1000000m,
+                    ReferenceNumber = $"DEP-{DateTime.UtcNow:yyyyMMdd}-{i}",
+                    Description = "Nap tien vao tai khoan",
+                    Status = TransactionStatus.Completed,
+                    CreatedAtUtc = DateTime.UtcNow,
+                    CompletedAtUtc = DateTime.UtcNow
+                };
+                context.Transactions.Add(tx);
+            }
+        }
+        await context.SaveChangesAsync();
+
+        logger.LogInformation("Database bulk seeding completed successfully.");
     }
 }

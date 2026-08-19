@@ -1,15 +1,19 @@
 <template>
-  <div class="q-pa-md max-width-1000 q-mx-auto">
-    <div class="row items-center justify-between q-mb-md">
-      <div class="text-h6 text-primary">
-        Thông báo
-        <q-badge color="negative" rounded class="q-ml-sm" v-if="unreadCount > 0">{{ unreadCount }}</q-badge>
+  <div class="bank-page">
+    <div class="bank-page-header">
+      <div>
+        <div class="bank-page-kicker">Trung tâm thông báo</div>
+        <div class="bank-page-title">
+          Thông báo
+          <q-badge color="negative" rounded class="q-ml-sm" v-if="unreadCount > 0">{{ unreadCount }}</q-badge>
+        </div>
+        <div class="bank-page-subtitle">Cập nhật giao dịch, thanh toán, tài khoản và cảnh báo bảo mật.</div>
       </div>
-      <q-btn v-if="unreadCount > 0" flat color="primary" label="Đánh dấu tất cả đã đọc" icon="done_all" @click="markAllAsRead" :loading="isMarking" />
+      <q-btn v-if="unreadCount > 0" unelevated color="primary" label="Đánh dấu tất cả đã đọc" icon="done_all" class="bank-action-btn" @click="markAllAsRead" :loading="isMarking" />
     </div>
 
-    <!-- Filters -->
-    <div class="row q-col-gutter-sm q-mb-md">
+    <q-card flat class="bank-filter-card q-mb-md">
+      <q-card-section class="row q-col-gutter-sm items-center">
       <div class="col-12 col-sm-auto">
         <q-btn-group outline>
           <q-btn :outline="filters.isRead !== undefined" :color="filters.isRead === undefined ? 'primary' : 'grey'" label="Tất cả" @click="setReadFilter(undefined)" />
@@ -18,6 +22,8 @@
       </div>
       <div class="col-12 col-sm-3">
         <q-select
+          popup-content-class="text-dark bg-white shadow-2"
+          options-selected-class="text-primary text-weight-bold"
           v-model="filters.type"
           :options="[
             { label: 'Tất cả loại', value: '' },
@@ -34,23 +40,24 @@
           @update:model-value="applyFilters"
         />
       </div>
-    </div>
+      </q-card-section>
+    </q-card>
 
     <div v-if="isLoading" class="text-center q-pa-xl">
       <q-spinner color="primary" size="3em" />
     </div>
 
-    <div v-else-if="notifications.length === 0" class="text-center text-grey-7 q-pa-xl bg-white rounded-borders border">
+    <div v-else-if="notifications.length === 0" class="text-center text-grey-7 q-pa-xl bank-card">
       Bạn chưa có thông báo nào.
     </div>
 
-    <q-list v-else bordered separator class="bg-white rounded-borders">
+    <q-list v-else separator class="bank-mobile-list notification-list">
       <q-item 
         v-for="noti in notifications" 
         :key="noti.id" 
         clickable 
         v-ripple 
-        :class="noti.isRead ? '' : 'bg-blue-1'"
+        :class="noti.isRead ? '' : 'unread-notification'"
         @click="handleNotificationClick(noti)"
       >
         <q-item-section avatar>
@@ -216,10 +223,10 @@ const getIconColor = (type: string) => {
 </script>
 
 <style scoped>
-.max-width-1000 {
-  max-width: 1000px;
+.notification-list {
+  overflow: hidden;
 }
-.border {
-  border: 1px solid var(--q-grey-3);
+.unread-notification {
+  background: #eff8ff;
 }
 </style>

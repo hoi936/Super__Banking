@@ -1,8 +1,14 @@
 <template>
-  <div class="q-pa-md max-width-800 q-mx-auto">
-    <div class="row items-center q-mb-md">
-      <q-btn flat round dense icon="arrow_back" color="primary" @click="goBack" class="q-mr-sm" />
-      <div class="text-h6 text-primary">Chi tiết thanh toán</div>
+  <div class="bank-page-narrow">
+    <div class="bank-page-header">
+      <div class="row items-center">
+        <q-btn flat round dense icon="arrow_back" class="bank-soft-btn q-mr-sm" @click="goBack" />
+        <div>
+          <div class="bank-page-kicker">Dịch vụ tiện ích</div>
+          <div class="bank-page-title">Chi tiết thanh toán</div>
+          <div class="bank-page-subtitle">Thông tin giao dịch thanh toán, hóa đơn và tài khoản trích tiền.</div>
+        </div>
+      </div>
     </div>
 
     <div v-if="isLoading" class="text-center q-pa-xl">
@@ -11,19 +17,21 @@
 
     <AppAlert v-else-if="error" :message="error" type="error" />
 
-    <q-card v-else-if="payment" flat bordered class="bg-white">
-      <q-card-section class="text-center q-pb-none">
+    <q-card v-else-if="payment" flat class="bank-card">
+      <q-card-section>
+        <div class="bank-money-panel">
         <div class="text-subtitle1 text-grey-8">Thanh toán hóa đơn</div>
         <div class="text-h4 text-weight-bold text-negative q-my-md">
           -{{ formatCurrency(payment.amount) }}
         </div>
-        <q-chip :color="getStatusColor(payment.status)" text-color="white">
+        <q-chip :color="getStatusColor(payment.status)" text-color="white" class="bank-chip">
           {{ getStatusLabel(payment.status) }}
         </q-chip>
+        </div>
       </q-card-section>
 
       <q-card-section>
-        <q-list separator>
+        <q-list separator class="bank-kv-list">
           <q-item>
             <q-item-section>
               <q-item-label caption>Mã tham chiếu</q-item-label>
@@ -145,10 +153,7 @@ const getBillTypeLabel = (type: string) => {
 </script>
 
 <style scoped>
-.max-width-800 {
-  max-width: 800px;
-}
 .font-mono {
-  font-family: monospace;
+  letter-spacing: 1px;
 }
 </style>

@@ -1,8 +1,14 @@
 <template>
-  <div class="q-pa-md max-width-800 q-mx-auto">
-    <div class="row items-center q-mb-md">
-      <q-btn flat round dense icon="arrow_back" color="primary" @click="goBack" class="q-mr-sm" />
-      <div class="text-h6 text-primary">Chi tiết hóa đơn</div>
+  <div class="bank-page-narrow">
+    <div class="bank-page-header">
+      <div class="row items-center">
+        <q-btn flat round dense icon="arrow_back" class="bank-soft-btn q-mr-sm" @click="goBack" />
+        <div>
+          <div class="bank-page-kicker">Dịch vụ tiện ích</div>
+          <div class="bank-page-title">Chi tiết hóa đơn</div>
+          <div class="bank-page-subtitle">Kiểm tra hóa đơn và chọn tài khoản thanh toán an toàn.</div>
+        </div>
+      </div>
     </div>
 
     <div v-if="isLoading" class="text-center q-pa-xl">
@@ -18,7 +24,7 @@
       color="primary"
       animated
       flat
-      bordered
+      class="bank-card"
     >
       <!-- Step 1: Chi tiết hóa đơn -->
       <q-step
@@ -27,7 +33,7 @@
         icon="receipt"
         :done="step > 1"
       >
-        <q-list separator class="bg-grey-1 rounded-borders">
+        <q-list separator class="bank-kv-list">
           <q-item>
             <q-item-section>
               <q-item-label caption>Nhà cung cấp</q-item-label>
@@ -56,7 +62,7 @@
             <q-item-section>
               <q-item-label caption>Trạng thái</q-item-label>
               <q-item-label>
-                <q-chip :color="getStatusColor(bill.status)" text-color="white">
+                <q-chip :color="getStatusColor(bill.status)" text-color="white" class="bank-chip">
                   {{ getStatusLabel(bill.status) }}
                 </q-chip>
               </q-item-label>
@@ -65,7 +71,7 @@
         </q-list>
 
         <q-stepper-navigation class="row justify-end q-mt-md">
-          <q-btn v-if="canPay" @click="goToStep2" color="primary" label="Thanh toán ngay" />
+          <q-btn v-if="canPay" @click="goToStep2" color="primary" label="Thanh toán ngay" class="bank-action-btn" />
           <q-btn v-else-if="bill.status === 'PAID'" color="positive" label="Đã thanh toán" disable />
           <q-btn v-else-if="bill.status === 'CANCELLED'" color="grey" label="Đã hủy" disable />
         </q-stepper-navigation>
@@ -80,6 +86,8 @@
       >
         <div class="q-mb-md text-subtitle1 text-weight-bold">Chọn tài khoản thanh toán</div>
         <q-select
+          popup-content-class="text-dark bg-white shadow-2"
+          options-selected-class="text-primary text-weight-bold"
           v-model="selectedAccountId"
           :options="accounts"
           option-value="id"
@@ -104,7 +112,7 @@
           Tài khoản không đủ số dư để thanh toán hóa đơn này.
         </div>
 
-        <q-card flat bordered class="q-mt-md bg-orange-1">
+        <q-card flat class="q-mt-md confirm-card">
           <q-card-section>
             <div class="text-weight-bold q-mb-sm">Xác nhận thông tin</div>
             <div class="row justify-between q-mb-xs">
@@ -122,10 +130,11 @@
 
         <q-stepper-navigation class="row justify-between q-mt-lg">
           <q-btn flat @click="step = 1" color="primary" label="Quay lại" :disable="isPaying" />
-          <q-btn 
+          <q-btn
             @click="submitPayment" 
             color="primary" 
             label="Xác nhận thanh toán" 
+            class="bank-action-btn"
             :loading="isPaying"
             :disable="!selectedAccountId || insufficientFunds"
           />
@@ -143,9 +152,9 @@
           <div class="text-h5 q-mt-md text-weight-bold text-positive">Thanh toán thành công!</div>
         </div>
 
-        <q-card flat bordered class="q-mt-md" v-if="receipt">
+        <q-card flat class="bank-card q-mt-md" v-if="receipt">
           <q-card-section>
-            <q-list separator>
+            <q-list separator class="bank-kv-list">
               <q-item>
                 <q-item-section>
                   <q-item-label caption>Mã giao dịch</q-item-label>
@@ -335,7 +344,9 @@ const copyToClipboard = async (text: string) => {
 </script>
 
 <style scoped>
-.max-width-800 {
-  max-width: 800px;
+.confirm-card {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 8px;
 }
 </style>

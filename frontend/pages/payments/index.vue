@@ -1,15 +1,20 @@
 <template>
-  <div class="q-pa-md">
-    <div class="row items-center q-mb-md">
-      <div class="text-h6 text-primary">Lịch sử thanh toán hóa đơn</div>
+  <div class="bank-page">
+    <div class="bank-page-header">
+      <div>
+        <div class="bank-page-kicker">Dịch vụ tiện ích</div>
+        <div class="bank-page-title">Lịch sử thanh toán hóa đơn</div>
+        <div class="bank-page-subtitle">Tra cứu các khoản đã thanh toán theo trạng thái, loại dịch vụ và thời gian.</div>
+      </div>
     </div>
 
-    <!-- Filters -->
-    <q-card flat bordered class="q-mb-md bg-grey-1">
+    <q-card flat class="bank-filter-card q-mb-md">
       <q-card-section>
         <div class="row q-col-gutter-md">
           <div class="col-12 col-md-3">
             <q-select
+              popup-content-class="text-dark bg-white shadow-2"
+              options-selected-class="text-primary text-weight-bold"
               v-model="filters.status"
               :options="[
                 { label: 'Tất cả trạng thái', value: '' },
@@ -26,6 +31,8 @@
           </div>
           <div class="col-12 col-md-3">
             <q-select
+              popup-content-class="text-dark bg-white shadow-2"
+              options-selected-class="text-primary text-weight-bold"
               v-model="filters.billType"
               :options="[
                 { label: 'Tất cả loại', value: '' },
@@ -49,7 +56,7 @@
             <q-input v-model="filters.toDate" outlined dense type="date" label="Đến ngày" />
           </div>
           <div class="col-12 col-md-2 flex flex-center">
-            <q-btn color="primary" label="Lọc" @click="applyFilters" class="full-width" />
+            <q-btn unelevated color="primary" icon="filter_alt" label="Lọc" @click="applyFilters" class="bank-action-btn full-width" />
           </div>
         </div>
       </q-card-section>
@@ -63,10 +70,9 @@
       row-key="id"
       :loading="isLoading"
       flat
-      bordered
       :pagination="pagination"
       @request="onRequest"
-      class="bg-white"
+      class="bank-table bank-card"
     >
       <template v-slot:body-cell-amount="props">
         <q-td :props="props" class="text-weight-bold text-negative">
@@ -75,7 +81,7 @@
       </template>
       <template v-slot:body-cell-status="props">
         <q-td :props="props">
-          <q-chip :color="getStatusColor(props.row.status)" text-color="white" size="sm" dense>
+          <q-chip :color="getStatusColor(props.row.status)" text-color="white" size="sm" dense class="bank-chip">
             {{ getStatusLabel(props.row.status) }}
           </q-chip>
         </q-td>
@@ -97,10 +103,10 @@
       <div v-if="isLoading" class="text-center q-pa-md">
         <q-spinner color="primary" size="2em" />
       </div>
-      <div v-else-if="payments.length === 0" class="text-center text-grey-7 q-pa-lg bg-white rounded-borders">
+      <div v-else-if="payments.length === 0" class="text-center text-grey-7 q-pa-lg bank-mobile-list">
         Bạn chưa có giao dịch thanh toán nào phù hợp.
       </div>
-      <q-list v-else bordered separator class="bg-white rounded-borders">
+      <q-list v-else separator class="bank-mobile-list">
         <q-item v-for="payment in payments" :key="payment.id" clickable :to="`/payments/${payment.id}`">
           <q-item-section>
             <q-item-label class="text-weight-bold">{{ payment.providerName }}</q-item-label>
@@ -112,7 +118,7 @@
               -{{ formatCurrency(payment.amount) }}
             </q-item-label>
             <q-item-label>
-              <q-chip :color="getStatusColor(payment.status)" text-color="white" size="xs" dense>
+              <q-chip :color="getStatusColor(payment.status)" text-color="white" size="xs" dense class="bank-chip">
                 {{ getStatusLabel(payment.status) }}
               </q-chip>
             </q-item-label>

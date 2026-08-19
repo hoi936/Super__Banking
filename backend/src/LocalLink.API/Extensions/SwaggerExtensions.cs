@@ -9,6 +9,9 @@ public static class SwaggerExtensions
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(options =>
         {
+            // Fix SchemaId conflicts for classes with same name in different namespaces (e.g., CustomerProfileDto)
+            options.CustomSchemaIds(type => type.FullName);
+
             options.SwaggerDoc("v1", new OpenApiInfo
             {
                 Title = "InterLink Banking API",

@@ -1,66 +1,87 @@
 <template>
-  <div class="q-pa-md">
-    <div class="row items-center justify-between q-mb-md">
-      <div class="text-h5 text-weight-bold">Audit Logs</div>
+  <div class="admin-page">
+    <div class="admin-page-header">
+      <div>
+        <div class="admin-page-kicker">Kiểm toán hệ thống</div>
+        <div class="admin-page-title">Nhật ký truy cập</div>
+        <div class="admin-page-subtitle">Lưu vết hành động, đối tượng tác động, người dùng và địa chỉ IP phục vụ kiểm soát rủi ro.</div>
+      </div>
     </div>
 
-    <q-card flat bordered class="q-mb-md">
-      <q-card-section>
-        <div class="row q-col-gutter-md">
-          <div class="col-12 col-sm-4 col-md-3">
+    <q-card flat class="admin-filter-card q-mb-lg">
+      <q-card-section class="q-pa-lg">
+        <div class="row q-col-gutter-md items-center">
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="admin-field-label">Tìm kiếm chung</div>
             <q-input 
               v-model="filters.search" 
               outlined 
               dense 
-              placeholder="Mô tả, IP..." 
+              placeholder="Nhập mô tả, địa chỉ IP..." 
+              bg-color="grey-1"
               clearable
               @keyup.enter="fetchAuditLogs"
             >
-              <template v-slot:append>
-                <q-icon name="search" @click="fetchAuditLogs" class="cursor-pointer" />
+              <template v-slot:prepend>
+                <q-icon name="search" color="primary" />
               </template>
             </q-input>
           </div>
-          <div class="col-12 col-sm-4 col-md-2">
+          <div class="col-12 col-sm-6 col-md-2">
+            <div class="admin-field-label">Loại hành động</div>
             <q-input 
               v-model="filters.action" 
               outlined 
               dense 
-              placeholder="Hành động (VD: USER_SUSPEND)" 
+              placeholder="VD: LOGIN, UPDATE..." 
+              bg-color="grey-1"
               clearable
               @keyup.enter="fetchAuditLogs"
-            />
+            >
+              <template v-slot:prepend>
+                <q-icon name="code" color="grey-7" />
+              </template>
+            </q-input>
           </div>
           <div class="col-12 col-sm-4 col-md-2">
+            <div class="admin-field-label">User ID</div>
             <q-input 
               v-model="filters.userId" 
               outlined 
               dense 
-              placeholder="User ID" 
+              placeholder="Nhập User ID..." 
+              bg-color="grey-1"
               clearable
               @keyup.enter="fetchAuditLogs"
-            />
+            >
+              <template v-slot:prepend>
+                <q-icon name="person" color="grey-7" />
+              </template>
+            </q-input>
           </div>
-          <div class="col-12 col-sm-6 col-md-2">
-            <q-input outlined dense v-model="filters.fromDate" label="Từ ngày" type="date" clearable @change="fetchAuditLogs" />
+          <div class="col-12 col-sm-4 col-md-2">
+            <div class="admin-field-label">Từ ngày</div>
+            <q-input outlined dense v-model="filters.fromDate" type="date" bg-color="grey-1" clearable @change="fetchAuditLogs" />
           </div>
-          <div class="col-12 col-sm-6 col-md-2">
-            <q-input outlined dense v-model="filters.toDate" label="Đến ngày" type="date" clearable @change="fetchAuditLogs" />
+          <div class="col-12 col-sm-4 col-md-2">
+            <div class="admin-field-label">Đến ngày</div>
+            <q-input outlined dense v-model="filters.toDate" type="date" bg-color="grey-1" clearable @change="fetchAuditLogs" />
           </div>
-          <div class="col-12 col-md-1 flex items-center justify-end">
-             <q-btn color="primary" icon="refresh" label="Lọc" @click="fetchAuditLogs" class="full-width" />
+          <div class="col-12 col-md-1 flex items-center justify-end" style="margin-top: 32px">
+             <q-btn unelevated color="primary" icon="refresh" @click="fetchAuditLogs" class="admin-action-btn full-width" padding="8px" />
           </div>
         </div>
         
         <!-- Validation Error -->
-        <div v-if="dateValidationError" class="text-negative q-mt-sm">
-          Ngày bắt đầu không được lớn hơn ngày kết thúc.
+        <div v-if="dateValidationError" class="text-negative q-mt-sm row items-center">
+          <q-icon name="error" class="q-mr-xs" /> Ngày bắt đầu không được lớn hơn ngày kết thúc.
         </div>
       </q-card-section>
     </q-card>
 
-    <q-card flat bordered>
+    <q-card flat class="admin-card admin-table-card">
       <q-table
+        class="premium-table"
         :rows="auditLogs"
         :columns="columns"
         row-key="id"
@@ -68,45 +89,63 @@
         v-model:pagination="pagination"
         @request="onRequest"
         flat
-        bordered
+        :rows-per-page-options="[20, 50, 100]"
       >
         <template v-slot:body-cell-action="props">
           <q-td :props="props">
-            <q-badge color="grey-8" outline>
+            <q-chip color="grey-2" text-color="dark" class="admin-chip font-monospace" size="sm">
               {{ props.row.action }}
-            </q-badge>
+            </q-chip>
           </q-td>
         </template>
         
         <template v-slot:body-cell-createdAtUtc="props">
-          <q-td :props="props">
+          <q-td :props="props" class="text-grey-8 text-weight-medium">
             {{ formatDateTime(props.row.createdAtUtc) }}
+          </q-td>
+        </template>
+
+        <template v-slot:body-cell-userId="props">
+          <q-td :props="props" class="text-grey-7 font-monospace">
+            {{ props.row.userId || '-' }}
           </q-td>
         </template>
         
         <template v-slot:body-cell-entityInfo="props">
           <q-td :props="props">
             <div v-if="props.row.entityType">
-              <span class="text-weight-bold">{{ props.row.entityType }}</span>
-              <div class="text-caption text-grey-7">{{ props.row.entityId }}</div>
+              <span class="text-weight-bold text-primary">{{ props.row.entityType }}</span>
+              <div class="text-caption text-grey-6 font-monospace">{{ props.row.entityId }}</div>
             </div>
-            <span v-else class="text-grey">-</span>
+            <span v-else class="text-grey-5">-</span>
           </q-td>
         </template>
 
         <template v-slot:body-cell-description="props">
           <q-td :props="props">
-            <div class="ellipsis" style="max-width: 300px">
+            <div class="ellipsis text-dark" style="max-width: 350px">
               {{ props.row.description || '-' }}
-              <q-tooltip v-if="props.row.description">{{ props.row.description }}</q-tooltip>
+              <q-tooltip v-if="props.row.description" class="bg-dark text-white text-body2">{{ props.row.description }}</q-tooltip>
+            </div>
+          </q-td>
+        </template>
+
+        <template v-slot:body-cell-ipAddress="props">
+          <q-td :props="props">
+            <div class="row items-center no-wrap text-grey-8">
+              <q-icon name="lan" size="xs" class="q-mr-xs text-grey-5" v-if="props.row.ipAddress" />
+              <span class="font-monospace">{{ props.row.ipAddress || '-' }}</span>
             </div>
           </q-td>
         </template>
 
         <template v-slot:no-data>
-          <div class="full-width row flex-center text-accent q-pa-md">
-            <q-icon size="2em" name="policy" />
-            <span class="q-ml-sm">Không tìm thấy nhật ký phù hợp.</span>
+          <div class="full-width row flex-center text-grey-5 q-pa-xl">
+            <div class="text-center">
+              <q-icon size="4em" name="policy" class="q-mb-md opacity-30" />
+              <div class="text-h6 text-weight-medium">Không tìm thấy nhật ký</div>
+              <div class="text-caption">Chưa có hoạt động nào được lưu vết theo điều kiện tìm kiếm</div>
+            </div>
           </div>
         </template>
       </q-table>
@@ -156,11 +195,11 @@ const dateValidationError = computed(() => {
 
 const columns = [
   { name: 'createdAtUtc', label: 'Thời gian', field: 'createdAtUtc', align: 'left' as const, sortable: false },
-  { name: 'action', label: 'Action', field: 'action', align: 'left' as const, sortable: false },
-  { name: 'userId', label: 'User ID', field: 'userId', align: 'left' as const, sortable: false },
-  { name: 'entityInfo', label: 'Entity (Loại/ID)', field: 'entityInfo', align: 'left' as const, sortable: false },
-  { name: 'description', label: 'Mô tả', field: 'description', align: 'left' as const, sortable: false },
-  { name: 'ipAddress', label: 'IP Address', field: 'ipAddress', align: 'left' as const, sortable: false }
+  { name: 'action', label: 'Hành động', field: 'action', align: 'left' as const, sortable: false },
+  { name: 'userId', label: 'Mã tài khoản (User ID)', field: 'userId', align: 'left' as const, sortable: false },
+  { name: 'entityInfo', label: 'Đối tượng tác động', field: 'entityInfo', align: 'left' as const, sortable: false },
+  { name: 'description', label: 'Mô tả chi tiết', field: 'description', align: 'left' as const, sortable: false },
+  { name: 'ipAddress', label: 'Địa chỉ IP', field: 'ipAddress', align: 'right' as const, sortable: false }
 ]
 
 const fetchAuditLogs = async (props?: any) => {
@@ -213,3 +252,9 @@ onMounted(() => {
   fetchAuditLogs()
 })
 </script>
+
+<style scoped>
+.font-monospace {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+</style>
