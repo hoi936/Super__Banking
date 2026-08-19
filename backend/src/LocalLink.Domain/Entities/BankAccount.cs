@@ -27,4 +27,5 @@ public class BankAccount
     public virtual ICollection<Transfer> SourceTransfers { get; set; } = new List<Transfer>();
     public virtual ICollection<Transfer> DestinationTransfers { get; set; } = new List<Transfer>();
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
+    public virtual ICollection<TermDeposit> TermDeposits { get; set; } = new List<TermDeposit>();
 }

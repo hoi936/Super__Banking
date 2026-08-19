@@ -23,6 +23,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Transfer> Transfers => Set<Transfer>();
     public DbSet<Bill> Bills => Set<Bill>();
     public DbSet<Payment> Payments => Set<Payment>();
+    public DbSet<TermDeposit> TermDeposits => Set<TermDeposit>();
     public DbSet<Notification> Notifications => Set<Notification>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
 
