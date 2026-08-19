@@ -1,15 +1,18 @@
 <template>
-  <div class="q-pa-md">
-    <div class="row items-center justify-between q-mb-md">
+  <div class="admin-page">
+    <div class="admin-page-header">
       <div class="row items-center">
-        <q-btn flat round dense icon="arrow_back" @click="router.back()" class="q-mr-sm" />
-        <div class="text-h5 text-weight-bold">Chi tiết Giao dịch</div>
+        <q-btn flat round dense icon="arrow_back" @click="router.back()" class="admin-soft-btn q-mr-sm" />
+        <div>
+          <div class="admin-page-kicker">Giám sát dòng tiền</div>
+          <div class="admin-page-title">Chi tiết giao dịch</div>
+          <div class="admin-page-subtitle">Kiểm tra số tiền, mã tham chiếu, trạng thái và tài khoản liên quan.</div>
+        </div>
       </div>
-      <q-btn flat color="primary" icon="refresh" label="Làm mới" @click="fetchTransaction" />
+      <q-btn unelevated color="primary" icon="refresh" label="Làm mới" class="admin-action-btn" @click="fetchTransaction" />
     </div>
 
-    <!-- Error state -->
-    <q-banner v-if="hasError" inline-actions rounded class="bg-negative text-white q-mb-md">
+    <q-banner v-if="hasError" inline-actions rounded class="bg-red-1 text-negative q-mb-md">
       Có lỗi xảy ra khi tải dữ liệu. {{ errorMessage }}
       <template v-slot:action>
         <q-btn flat label="Thử lại" @click="fetchTransaction" />
@@ -18,7 +21,7 @@
 
     <!-- Skeleton Loading -->
     <div v-if="isLoading">
-      <q-card flat bordered class="q-mb-md">
+      <q-card flat class="admin-card q-mb-md">
         <q-card-section>
           <q-skeleton type="text" width="30%" class="text-h6" />
           <q-skeleton type="text" width="60%" class="q-mt-md" />
@@ -28,28 +31,27 @@
     </div>
 
     <template v-else-if="transaction">
-      <div class="row q-col-gutter-md">
-        <!-- Thông tin giao dịch chính -->
+      <div class="admin-detail-grid">
         <div class="col-12 col-md-6">
-          <q-card flat bordered class="h-100">
+          <q-card flat class="admin-card admin-detail-card">
             <q-card-section>
-              <div class="text-h6 q-mb-md">Thông tin chung</div>
+              <div class="admin-detail-title">Thông tin chung</div>
               
-              <div class="flex flex-center q-mb-lg">
+              <div class="admin-money-panel q-mb-lg">
                 <div class="text-center">
                   <div class="text-subtitle1 text-grey-7">Số tiền</div>
                   <div class="text-h3 text-weight-bold" :class="transaction.transactionType === 'FEE' ? 'text-negative' : 'text-primary'">
                     {{ formatCurrency(transaction.amount, transaction.currency) }}
                   </div>
                   <div class="q-mt-sm">
-                    <q-badge :color="getStatusColor(transaction.status)">
+                    <q-badge :color="getStatusColor(transaction.status)" class="admin-chip">
                       {{ getStatusLabel(transaction.status) }}
                     </q-badge>
                   </div>
                 </div>
               </div>
 
-              <q-list dense>
+              <q-list dense class="admin-kv-list">
                 <q-item>
                   <q-item-section>
                     <q-item-label caption>Mã tham chiếu</q-item-label>
@@ -60,7 +62,7 @@
                   <q-item-section>
                     <q-item-label caption>Loại giao dịch</q-item-label>
                     <q-item-label>
-                      <q-badge :color="getTypeColor(transaction.transactionType)" outline>
+                      <q-badge :color="getTypeColor(transaction.transactionType)" outline class="admin-chip">
                         {{ getTypeLabel(transaction.transactionType) }}
                       </q-badge>
                     </q-item-label>
@@ -89,17 +91,15 @@
           </q-card>
         </div>
 
-        <!-- Thông tin Tài khoản -->
         <div class="col-12 col-md-6">
           <div class="row q-col-gutter-md h-100">
-            <!-- Nguồn -->
             <div class="col-12" v-if="transaction.sourceAccount">
-              <q-card flat bordered class="bg-grey-1 h-100">
+              <q-card flat class="admin-card admin-detail-card">
                 <q-card-section>
                   <div class="text-subtitle1 text-weight-bold q-mb-sm text-negative">
                     <q-icon name="arrow_upward" class="q-mr-xs" /> Tài khoản gửi (Nguồn)
                   </div>
-                  <q-list dense>
+                  <q-list dense class="admin-kv-list">
                     <q-item>
                       <q-item-section>
                         <q-item-label caption>Chủ tài khoản (Khách hàng)</q-item-label>
@@ -120,14 +120,13 @@
               </q-card>
             </div>
 
-            <!-- Đích -->
             <div class="col-12" v-if="transaction.destinationAccount">
-              <q-card flat bordered class="bg-grey-1 h-100">
+              <q-card flat class="admin-card admin-detail-card">
                 <q-card-section>
                   <div class="text-subtitle1 text-weight-bold q-mb-sm text-positive">
                     <q-icon name="arrow_downward" class="q-mr-xs" /> Tài khoản nhận (Đích)
                   </div>
-                  <q-list dense>
+                  <q-list dense class="admin-kv-list">
                     <q-item>
                       <q-item-section>
                         <q-item-label caption>Chủ tài khoản (Khách hàng)</q-item-label>
@@ -149,7 +148,7 @@
             </div>
             
             <div class="col-12" v-if="!transaction.sourceAccount && !transaction.destinationAccount">
-               <q-card flat bordered class="bg-grey-1 h-100 flex flex-center">
+               <q-card flat class="admin-card admin-detail-card h-100 flex flex-center">
                   <q-card-section class="text-center text-grey-6">
                     <q-icon name="info" size="2em" />
                     <div class="q-mt-sm">Giao dịch này không liên kết với tài khoản hệ thống.</div>

@@ -1,15 +1,20 @@
 <template>
-  <div class="q-pa-md">
-    <div class="row items-center q-mb-md">
-      <div class="text-h6 text-primary">Danh sách hóa đơn</div>
+  <div class="bank-page">
+    <div class="bank-page-header">
+      <div>
+        <div class="bank-page-kicker">Dịch vụ tiện ích</div>
+        <div class="bank-page-title">Danh sách hóa đơn</div>
+        <div class="bank-page-subtitle">Theo dõi hóa đơn chưa thanh toán, quá hạn và lịch sử dịch vụ của bạn.</div>
+      </div>
     </div>
 
-    <!-- Filters -->
-    <q-card flat bordered class="q-mb-md bg-grey-1">
+    <q-card flat class="bank-filter-card q-mb-md">
       <q-card-section>
         <div class="row q-col-gutter-md">
           <div class="col-12 col-md-3">
             <q-select
+              popup-content-class="text-dark bg-white shadow-2"
+              options-selected-class="text-primary text-weight-bold"
               v-model="filters.status"
               :options="[
                 { label: 'Tất cả trạng thái', value: '' },
@@ -27,6 +32,8 @@
           </div>
           <div class="col-12 col-md-3">
             <q-select
+              popup-content-class="text-dark bg-white shadow-2"
+              options-selected-class="text-primary text-weight-bold"
               v-model="filters.type"
               :options="[
                 { label: 'Tất cả loại', value: '' },
@@ -50,7 +57,7 @@
             <q-input v-model="filters.toDueDate" outlined dense type="date" label="Hạn đến ngày" />
           </div>
           <div class="col-12 col-md-2 flex flex-center">
-            <q-btn color="primary" label="Lọc" @click="applyFilters" class="full-width" />
+            <q-btn unelevated color="primary" icon="filter_alt" label="Lọc" @click="applyFilters" class="bank-action-btn full-width" />
           </div>
         </div>
       </q-card-section>
@@ -64,10 +71,9 @@
       row-key="id"
       :loading="isLoading"
       flat
-      bordered
       :pagination="pagination"
       @request="onRequest"
-      class="bg-white"
+      class="bank-table bank-card"
     >
       <template v-slot:body-cell-amount="props">
         <q-td :props="props" class="text-weight-bold">
@@ -76,7 +82,7 @@
       </template>
       <template v-slot:body-cell-status="props">
         <q-td :props="props">
-          <q-chip :color="getStatusColor(props.row.status)" text-color="white" size="sm" dense>
+          <q-chip :color="getStatusColor(props.row.status)" text-color="white" size="sm" dense class="bank-chip">
             {{ getStatusLabel(props.row.status) }}
           </q-chip>
         </q-td>
@@ -98,10 +104,10 @@
       <div v-if="isLoading" class="text-center q-pa-md">
         <q-spinner color="primary" size="2em" />
       </div>
-      <div v-else-if="bills.length === 0" class="text-center text-grey-7 q-pa-lg bg-white rounded-borders">
+      <div v-else-if="bills.length === 0" class="text-center text-grey-7 q-pa-lg bank-mobile-list">
         Bạn chưa có hóa đơn nào phù hợp.
       </div>
-      <q-list v-else bordered separator class="bg-white rounded-borders">
+      <q-list v-else separator class="bank-mobile-list">
         <q-item v-for="bill in bills" :key="bill.id" clickable :to="`/bills/${bill.id}`">
           <q-item-section>
             <q-item-label class="text-weight-bold">{{ bill.providerName }}</q-item-label>
@@ -113,7 +119,7 @@
               {{ formatCurrency(bill.amount) }}
             </q-item-label>
             <q-item-label>
-              <q-chip :color="getStatusColor(bill.status)" text-color="white" size="xs" dense>
+              <q-chip :color="getStatusColor(bill.status)" text-color="white" size="xs" dense class="bank-chip">
                 {{ getStatusLabel(bill.status) }}
               </q-chip>
             </q-item-label>
@@ -140,6 +146,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { formatCurrency } from '~/utils/currency'
 import { formatDate } from '~/utils/date'
+import { getBillStatusColor as getStatusColor, getBillStatusLabel as getStatusLabel } from '~/utils/status'
 import { useBillService } from '~/services/billService'
 import type { BillListItemDto } from '~/types/bill'
 

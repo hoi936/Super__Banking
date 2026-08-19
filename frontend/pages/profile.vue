@@ -1,10 +1,16 @@
 <template>
-  <div class="q-pa-md max-width-800">
-    <div class="text-h5 text-weight-bold text-primary q-mb-lg">Hồ sơ cá nhân</div>
+  <div class="bank-page-narrow">
+    <div class="bank-page-header">
+      <div>
+        <div class="bank-page-kicker">Thông tin cá nhân</div>
+        <div class="bank-page-title">Hồ sơ cá nhân</div>
+        <div class="bank-page-subtitle">Cập nhật thông tin liên hệ và dữ liệu định danh dùng trong hệ thống.</div>
+      </div>
+    </div>
 
     <AppAlert v-if="hasError" type="error" :message="errorMessage" class="q-mb-md" />
 
-    <q-card flat bordered class="bg-white">
+    <q-card flat class="bank-card">
       <q-card-section v-if="isLoading" class="q-pa-lg">
         <q-skeleton type="rect" height="300px" />
       </q-card-section>
@@ -14,20 +20,20 @@
           
           <div class="row q-col-gutter-md">
             <div class="col-12 col-md-6">
-              <q-input 
+              <q-input
                 v-model="profile.customerCode" 
                 label="Mã khách hàng" 
                 readonly 
-                filled
+                outlined
                 hint="Không thể thay đổi"
               />
             </div>
             <div class="col-12 col-md-6">
-              <q-input 
+              <q-input
                 v-model="profile.status" 
                 label="Trạng thái tài khoản" 
                 readonly 
-                filled
+                outlined
                 hint="Không thể thay đổi"
               />
             </div>
@@ -53,6 +59,8 @@
             </div>
             <div class="col-12 col-md-6">
               <q-select 
+                popup-content-class="text-dark bg-white shadow-2"
+                options-selected-class="text-primary text-weight-bold"
                 v-model="formData.gender" 
                 :options="['Male', 'Female', 'Other']" 
                 label="Giới tính" 
@@ -82,11 +90,11 @@
 
           <div class="row justify-end q-mt-lg">
             <template v-if="!isEditing">
-              <q-btn color="primary" label="Chỉnh sửa hồ sơ" icon="edit" @click="startEditing" />
+              <q-btn color="primary" label="Chỉnh sửa hồ sơ" icon="edit" class="bank-action-btn" @click="startEditing" />
             </template>
             <template v-else>
               <q-btn flat color="grey-8" label="Hủy" class="q-mr-sm" @click="cancelEditing" :disable="isSaving" />
-              <q-btn color="primary" label="Lưu thay đổi" type="submit" :loading="isSaving" icon="save" />
+              <q-btn color="primary" label="Lưu thay đổi" type="submit" :loading="isSaving" icon="save" class="bank-action-btn" />
             </template>
           </div>
           
@@ -205,8 +213,4 @@ const onSubmit = async () => {
 </script>
 
 <style scoped>
-.max-width-800 {
-  max-width: 800px;
-  margin: 0 auto;
-}
 </style>

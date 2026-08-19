@@ -1,7 +1,11 @@
 <template>
-  <div class="q-pa-md">
-    <div class="row items-center q-mb-md">
-      <div class="text-h6 text-primary">Chuyển tiền nội bộ</div>
+  <div class="bank-page-narrow">
+    <div class="bank-page-header">
+      <div>
+        <div class="bank-page-kicker">Chuyển tiền</div>
+        <div class="bank-page-title">Chuyển tiền nội bộ</div>
+        <div class="bank-page-subtitle">Nhập thông tin người nhận, xác nhận giao dịch và nhận biên lai tức thì.</div>
+      </div>
     </div>
 
     <q-stepper
@@ -10,7 +14,7 @@
       color="primary"
       animated
       flat
-      bordered
+      class="bank-card transfer-stepper"
     >
       <!-- STEP 1: INFORMATION -->
       <q-step
@@ -22,8 +26,10 @@
         <AppAlert v-if="errorMessage" :message="errorMessage" type="error" @dismiss="errorMessage = ''" class="q-mb-md" />
 
         <q-form ref="form1" @submit="onValidateStep1" class="q-gutter-md">
-          <div class="text-subtitle2 text-grey-8">Tài khoản nguồn</div>
+          <div class="bank-field-label">Tài khoản nguồn</div>
           <q-select
+            popup-content-class="text-dark bg-white shadow-2"
+            options-selected-class="text-primary text-weight-bold"
             v-model="sourceAccountId"
             :options="activeAccounts"
             option-value="id"
@@ -46,7 +52,7 @@
             </template>
           </q-select>
 
-          <div class="text-subtitle2 text-grey-8 q-mt-md">Tài khoản đích</div>
+          <div class="bank-field-label q-mt-md">Tài khoản đích</div>
           <div class="row q-col-gutter-sm items-start">
             <div class="col-12 col-md-8">
               <q-input
@@ -72,7 +78,7 @@
                 color="primary"
                 icon="contacts"
                 label="Danh bạ"
-                class="full-width"
+                class="full-width bank-action-btn"
                 style="height: 56px"
                 @click="showBeneficiaries = true"
               />
@@ -80,19 +86,19 @@
           </div>
 
           <!-- Lookup Result -->
-          <q-card v-if="destinationName" flat bordered class="bg-blue-1 q-mb-md">
+          <q-card v-if="destinationName" flat class="lookup-card lookup-card-ok q-mb-md">
             <q-card-section class="q-py-sm">
               <div class="text-caption text-grey-7">Chủ tài khoản:</div>
               <div class="text-subtitle1 text-weight-bold text-primary">{{ destinationName }}</div>
             </q-card-section>
           </q-card>
-          <q-card v-if="lookupError" flat bordered class="bg-red-1 q-mb-md">
+          <q-card v-if="lookupError" flat class="lookup-card lookup-card-error q-mb-md">
             <q-card-section class="q-py-sm text-negative">
               {{ lookupError }}
             </q-card-section>
           </q-card>
 
-          <div class="text-subtitle2 text-grey-8 q-mt-md">Số tiền & Nội dung</div>
+          <div class="bank-field-label q-mt-md">Số tiền & Nội dung</div>
           <q-input
             v-model.number="amount"
             type="number"
@@ -119,7 +125,7 @@
           />
 
           <q-stepper-navigation>
-            <q-btn type="submit" color="primary" label="Tiếp tục" />
+            <q-btn type="submit" color="primary" label="Tiếp tục" class="bank-action-btn" />
           </q-stepper-navigation>
         </q-form>
       </q-step>
@@ -133,7 +139,7 @@
       >
         <AppAlert v-if="errorMessage" :message="errorMessage" type="error" @dismiss="errorMessage = ''" class="q-mb-md" />
 
-        <q-list bordered separator class="rounded-borders q-mb-md bg-white">
+        <q-list separator class="bank-kv-list confirm-list q-mb-md">
           <q-item>
             <q-item-section>
               <q-item-label caption>Tài khoản nguồn</q-item-label>
@@ -168,7 +174,7 @@
         </q-list>
 
         <q-stepper-navigation>
-          <q-btn @click="submitTransfer" color="primary" label="Xác nhận chuyển tiền" :loading="isSubmitting" />
+          <q-btn @click="submitTransfer" color="primary" label="Xác nhận chuyển tiền" class="bank-action-btn" :loading="isSubmitting" />
           <q-btn flat @click="step = 1" color="primary" label="Quay lại" class="q-ml-sm" :disable="isSubmitting" />
         </q-stepper-navigation>
       </q-step>
@@ -185,7 +191,7 @@
           <div class="text-subtitle1 text-grey-7 q-mb-lg">Giao dịch đã được xử lý</div>
         </div>
 
-        <q-card flat bordered class="q-mb-md">
+        <q-card flat class="bank-card q-mb-md">
           <q-card-section>
             <div class="row q-mb-sm">
               <div class="col-5 text-grey-7">Mã giao dịch</div>
@@ -220,7 +226,7 @@
         <q-checkbox v-if="!isBeneficiarySaved" v-model="saveBeneficiary" label="Lưu người nhận vào danh bạ" class="q-mb-md" />
 
         <q-stepper-navigation>
-          <q-btn @click="startNewTransfer" color="primary" label="Chuyển khoản mới" outline />
+          <q-btn @click="startNewTransfer" color="primary" label="Chuyển khoản mới" outline class="bank-action-btn" />
           <q-btn to="/dashboard" color="primary" label="Về trang chủ" class="q-ml-sm" flat />
           <q-btn to="/transactions" color="primary" label="Lịch sử giao dịch" class="q-ml-sm" flat />
         </q-stepper-navigation>
@@ -229,7 +235,7 @@
 
     <!-- Beneficiaries Dialog -->
     <q-dialog v-model="showBeneficiaries">
-      <q-card style="width: 400px; max-width: 90vw;">
+      <q-card class="bank-card" style="width: 420px; max-width: 90vw;">
         <q-card-section class="row items-center q-pb-none">
           <div class="text-h6">Danh bạ thụ hưởng</div>
           <q-space />
@@ -286,7 +292,7 @@ const errorMessage = ref('')
 // Data
 const accounts = ref<AccountSummary[]>([])
 const beneficiaries = ref<Beneficiary[]>([])
-const activeAccounts = computed(() => accounts.value.filter(a => a.status === 'ACTIVE'))
+const activeAccounts = computed(() => accounts.value.filter(a => a.status === 'ACTIVE' || a.status === 'Active'))
 
 // Form Fields
 const sourceAccountId = ref<string | null>(null)
@@ -313,11 +319,42 @@ onMounted(async () => {
   await loadAccounts()
   await loadBeneficiaries()
 
-  const querySource = route.query.sourceAccount as string
+  const querySource = getQueryValue(route.query.sourceAccount)
   if (querySource && activeAccounts.value.find(a => a.id === querySource)) {
     sourceAccountId.value = querySource
+  } else if (!sourceAccountId.value && activeAccounts.value.length > 0) {
+    sourceAccountId.value = activeAccounts.value[0].id
+  }
+
+  const queryDestination = getQueryValue(route.query.destinationAccount)
+  const queryAmount = getQueryValue(route.query.amount)
+  const queryDescription = getQueryValue(route.query.description)
+
+  if (queryDestination) {
+    destinationAccountNumber.value = queryDestination
+  }
+
+  if (queryAmount) {
+    const parsedAmount = Number(queryAmount)
+    amount.value = Number.isFinite(parsedAmount) && parsedAmount > 0 ? parsedAmount : null
+  }
+
+  if (queryDescription) {
+    description.value = queryDescription
+  }
+
+  if (destinationAccountNumber.value) {
+    await lookupDestination()
   }
 })
+
+const getQueryValue = (value: unknown) => {
+  if (Array.isArray(value)) {
+    return value[0] ? String(value[0]) : ''
+  }
+
+  return value ? String(value) : ''
+}
 
 const loadAccounts = async () => {
   try {
@@ -471,3 +508,38 @@ const copyToClipboard = async (text: string) => {
   }
 }
 </script>
+
+<style scoped>
+.transfer-stepper {
+  overflow: hidden;
+}
+
+.transfer-stepper :deep(.q-stepper__header) {
+  background: #f8fafc;
+  border-bottom: 1px solid #d9e2ef;
+}
+
+.transfer-stepper :deep(.q-stepper__step-inner) {
+  padding: 24px;
+}
+
+.lookup-card {
+  border-radius: 8px;
+}
+
+.lookup-card-ok {
+  background: #eff8ff;
+  border: 1px solid #b2ddff;
+}
+
+.lookup-card-error {
+  background: #fef3f2;
+  border: 1px solid #fecdca;
+}
+
+.confirm-list {
+  background: #ffffff;
+  border: 1px solid #d9e2ef;
+  border-radius: 8px;
+}
+</style>

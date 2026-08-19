@@ -7,6 +7,8 @@ InterLink Banking is an enterprise-ready, cloud-native financial platform design
 > [!TIP]
 > 📖 **Xem tài liệu hướng dẫn chạy dự án chi tiết bằng Tiếng Việt**: [Docs/HUONG_DAN_CHAY_DU_AN.md](Docs/HUONG_DAN_CHAY_DU_AN.md)
 
+> **Note**: Active development branch: `feature/huy`.
+
 ---
 
 ## Architecture Overview

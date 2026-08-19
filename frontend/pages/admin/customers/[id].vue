@@ -1,15 +1,18 @@
 <template>
-  <div class="q-pa-md">
-    <div class="row items-center justify-between q-mb-md">
+  <div class="admin-page">
+    <div class="admin-page-header">
       <div class="row items-center">
-        <q-btn flat round dense icon="arrow_back" @click="router.back()" class="q-mr-sm" />
-        <div class="text-h5 text-weight-bold">Chi tiết Khách hàng</div>
+        <q-btn flat round dense icon="arrow_back" @click="router.back()" class="admin-soft-btn q-mr-sm" />
+        <div>
+          <div class="admin-page-kicker">Hồ sơ khách hàng</div>
+          <div class="admin-page-title">Chi tiết khách hàng</div>
+          <div class="admin-page-subtitle">Thông tin định danh, trạng thái và danh sách tài khoản liên kết.</div>
+        </div>
       </div>
-      <q-btn flat color="primary" icon="refresh" label="Làm mới" @click="fetchCustomerDetail" />
+      <q-btn unelevated color="primary" icon="refresh" label="Làm mới" class="admin-action-btn" @click="fetchCustomerDetail" />
     </div>
 
-    <!-- Error state -->
-    <q-banner v-if="hasError" inline-actions rounded class="bg-negative text-white q-mb-md">
+    <q-banner v-if="hasError" inline-actions rounded class="bg-red-1 text-negative q-mb-md">
       Có lỗi xảy ra khi tải dữ liệu. {{ errorMessage }}
       <template v-slot:action>
         <q-btn flat label="Thử lại" @click="fetchCustomerDetail" />
@@ -18,7 +21,7 @@
 
     <!-- Skeleton Loading -->
     <div v-if="isLoading">
-      <q-card flat bordered class="q-mb-md">
+      <q-card flat class="admin-card q-mb-md">
         <q-card-section>
           <q-skeleton type="text" width="30%" class="text-h6" />
           <q-skeleton type="text" width="60%" class="q-mt-md" />
@@ -28,13 +31,12 @@
     </div>
 
     <template v-else-if="customer">
-      <div class="row q-col-gutter-md">
-        <!-- Thông tin cá nhân -->
+      <div class="admin-detail-grid">
         <div class="col-12 col-md-6">
-          <q-card flat bordered class="h-100">
+          <q-card flat class="admin-card admin-detail-card">
             <q-card-section>
-              <div class="text-h6 q-mb-md">Thông tin cá nhân</div>
-              <q-list dense>
+              <div class="admin-detail-title">Thông tin cá nhân</div>
+              <q-list dense class="admin-kv-list">
                 <q-item>
                   <q-item-section>
                     <q-item-label caption>Mã khách hàng</q-item-label>
@@ -82,31 +84,30 @@
           </q-card>
         </div>
 
-        <!-- Trạng thái và Hệ thống -->
         <div class="col-12 col-md-6">
-          <q-card flat bordered class="h-100">
+          <q-card flat class="admin-card admin-detail-card">
             <q-card-section>
-              <div class="text-h6 q-mb-md row items-center justify-between">
+              <div class="admin-detail-title row items-center justify-between">
                 <span>Trạng thái hệ thống</span>
                 
-                <!-- Chỉ hiển thị nút thay đổi với ADMIN -->
                 <q-btn
                   v-if="authStore.hasRole('ADMIN')"
                   :color="customer.customerStatus === 'ACTIVE' ? 'negative' : 'positive'"
                   :icon="customer.customerStatus === 'ACTIVE' ? 'lock' : 'lock_open'"
                   :label="customer.customerStatus === 'ACTIVE' ? 'Tạm khóa KH' : 'Mở khóa KH'"
                   size="sm"
-                  outline
+                  unelevated
+                  class="admin-action-btn"
                   @click="confirmToggleCustomerStatus"
                 />
               </div>
 
-              <q-list dense>
+              <q-list dense class="admin-kv-list">
                 <q-item>
                   <q-item-section>
                     <q-item-label caption>Trạng thái Khách hàng</q-item-label>
                     <q-item-label>
-                      <q-badge :color="getStatusColor(customer.customerStatus)">
+                      <q-badge :color="getStatusColor(customer.customerStatus)" class="admin-chip">
                         {{ getStatusLabel(customer.customerStatus) }}
                       </q-badge>
                     </q-item-label>
@@ -116,7 +117,7 @@
                   <q-item-section>
                     <q-item-label caption>Trạng thái User</q-item-label>
                     <q-item-label>
-                      <q-badge :color="getStatusColor(customer.userStatus)" outline>
+                      <q-badge :color="getStatusColor(customer.userStatus)" outline class="admin-chip">
                         {{ getStatusLabel(customer.userStatus) }}
                       </q-badge>
                     </q-item-label>
@@ -126,7 +127,7 @@
                   <q-item-section>
                     <q-item-label caption>Vai trò (Roles)</q-item-label>
                     <q-item-label>
-                      <q-chip v-for="role in customer.roles" :key="role" dense color="grey-3">
+                      <q-chip v-for="role in customer.roles" :key="role" dense color="grey-3" class="admin-chip">
                         {{ role }}
                       </q-chip>
                     </q-item-label>
@@ -150,15 +151,17 @@
         </div>
       </div>
 
-      <!-- Danh sách tài khoản -->
-      <div class="text-h6 q-mb-md q-mt-lg">Danh sách Tài khoản ({{ customer.accounts.length }})</div>
-      <q-card flat bordered>
+      <div class="admin-section-title">
+        <q-icon name="account_balance_wallet" />
+        <span>Danh sách tài khoản ({{ customer.accounts.length }})</span>
+      </div>
+      <q-card flat class="admin-card admin-table-card">
         <q-table
+          class="premium-table"
           :rows="customer.accounts"
           :columns="accountColumns"
           row-key="id"
           flat
-          bordered
           hide-pagination
           :pagination="{ rowsPerPage: 0 }"
         >
@@ -170,7 +173,7 @@
           
           <template v-slot:body-cell-status="props">
             <q-td :props="props">
-              <q-badge :color="props.row.status === 'ACTIVE' ? 'positive' : 'negative'">
+              <q-badge :color="props.row.status === 'ACTIVE' ? 'positive' : 'negative'" class="admin-chip">
                 {{ props.row.status === 'ACTIVE' ? 'Hoạt động' : 'Bị khóa' }}
               </q-badge>
             </q-td>
@@ -181,7 +184,7 @@
               <!-- Nút khóa/mở khóa tài khoản (Chỉ ADMIN) -->
               <q-btn
                 v-if="authStore.hasRole('ADMIN')"
-                flat
+                unelevated
                 round
                 size="sm"
                 :color="props.row.status === 'ACTIVE' ? 'negative' : 'positive'"

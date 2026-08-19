@@ -1,16 +1,20 @@
 <template>
-  <div class="q-pa-md max-width-1200">
-    <div class="row items-center q-mb-lg">
-      <q-btn flat round dense icon="arrow_back" color="grey-8" class="q-mr-sm" to="/accounts" />
-      <div class="col">
-        <div class="text-h5 text-weight-bold text-primary">Chi tiết tài khoản</div>
+  <div class="bank-page">
+    <div class="bank-page-header">
+      <div class="row items-center">
+        <q-btn flat round dense icon="arrow_back" class="bank-soft-btn q-mr-sm" to="/accounts" />
+        <div>
+          <div class="bank-page-kicker">Tài khoản ngân hàng</div>
+          <div class="bank-page-title">Chi tiết tài khoản</div>
+          <div class="bank-page-subtitle">Thông tin tài khoản, số dư khả dụng và thao tác nhanh.</div>
+        </div>
       </div>
     </div>
 
     <AppAlert v-if="hasError" type="error" :message="errorMessage" class="q-mb-md" />
 
     <div v-if="isLoading">
-      <q-card flat bordered class="q-mb-lg">
+      <q-card flat class="bank-card q-mb-lg">
         <q-card-section>
           <q-skeleton type="rect" height="200px" />
         </q-card-section>
@@ -19,18 +23,18 @@
 
     <div v-else-if="account">
       <!-- Account Details Card -->
-      <q-card flat bordered class="q-mb-lg bg-white">
+      <q-card flat class="bank-card q-mb-lg">
         <q-card-section class="q-pa-lg">
           <div class="row items-center justify-between q-mb-lg">
-            <div class="text-h5 text-weight-bold">{{ account.accountName }}</div>
-            <q-badge :color="account.status === 'Active' ? 'positive' : 'grey'" class="text-subtitle1 q-px-md q-py-sm">
+            <div class="account-title">{{ account.accountName }}</div>
+            <q-badge :color="isActiveStatus(account.status) ? 'positive' : 'grey'" class="bank-chip">
               {{ account.status }}
             </q-badge>
           </div>
           
           <div class="row q-col-gutter-lg">
             <div class="col-12 col-md-6">
-              <q-list class="bg-grey-1 rounded-borders q-pa-sm">
+              <q-list class="bank-kv-list">
                 <q-item>
                   <q-item-section>
                     <q-item-label caption>Số tài khoản</q-item-label>
@@ -68,12 +72,12 @@
             </div>
             
             <div class="col-12 col-md-6 flex column justify-center">
-              <div class="text-center q-pa-md bg-blue-1 rounded-borders full-height flex column flex-center">
+              <div class="bank-money-panel full-height flex column flex-center">
                 <div class="text-subtitle1 text-grey-8 q-mb-sm">Số dư khả dụng</div>
-                <div class="text-h3 text-primary text-weight-bold q-mb-md">
+                <div class="detail-balance q-mb-md">
                   {{ showBalance ? formatCurrency(account.balance, account.currency) : '******' }}
                 </div>
-                <q-btn outline color="primary" 
+                <q-btn outline color="primary" class="bank-action-btn"
                        :icon="showBalance ? 'visibility_off' : 'visibility'" 
                        :label="showBalance ? 'Ẩn số dư' : 'Hiện số dư'"
                        @click="showBalance = !showBalance" />
@@ -84,12 +88,12 @@
         
         <q-separator />
         
-        <q-card-actions class="q-pa-md bg-grey-2" align="around">
-          <q-btn flat color="primary" icon="send" label="Chuyển tiền" 
+        <q-card-actions class="q-pa-md" align="around">
+          <q-btn flat color="primary" icon="send" label="Chuyển tiền" class="text-weight-bold"
                  :to="`/transfer?sourceAccount=${account.id}`" />
-          <q-btn flat color="primary" icon="receipt" label="Thanh toán hóa đơn" 
+          <q-btn flat color="primary" icon="receipt" label="Thanh toán hóa đơn" class="text-weight-bold"
                  to="/bills" />
-          <q-btn flat color="primary" icon="history" label="Lịch sử giao dịch" 
+          <q-btn flat color="primary" icon="history" label="Lịch sử giao dịch" class="text-weight-bold"
                  :to="`/transactions?accountId=${account.id}`" />
         </q-card-actions>
       </q-card>
@@ -151,6 +155,8 @@ const formatAccountNumber = (number: string) => {
   return number
 }
 
+const isActiveStatus = (status: string) => status === 'ACTIVE' || status === 'Active'
+
 const copyToClipboard = async (text: string) => {
   try {
     await navigator.clipboard.writeText(text)
@@ -172,12 +178,18 @@ const copyToClipboard = async (text: string) => {
 </script>
 
 <style scoped>
-.max-width-1200 {
-  max-width: 1200px;
-  margin: 0 auto;
-}
 .font-mono {
-  font-family: monospace;
   letter-spacing: 1px;
+}
+.account-title {
+  color: #1d2939;
+  font-size: 24px;
+  font-weight: 850;
+}
+.detail-balance {
+  color: #1f6fd1;
+  font-size: clamp(30px, 5vw, 42px);
+  font-weight: 850;
+  line-height: 1.12;
 }
 </style>

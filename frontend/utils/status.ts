@@ -70,6 +70,7 @@ export const getBillStatusLabel = (status: string): string => {
     case 'UNPAID': return 'Chưa thanh toán'
     case 'PAID': return 'Đã thanh toán'
     case 'OVERDUE': return 'Quá hạn'
+    case 'CANCELLED': return 'Đã hủy'
     default: return status || 'Không rõ'
   }
 }
@@ -79,6 +80,7 @@ export const getBillStatusColor = (status: string): string => {
     case 'PAID': return 'positive'
     case 'UNPAID': return 'warning'
     case 'OVERDUE': return 'negative'
+    case 'CANCELLED': return 'grey'
     default: return 'grey'
   }
 }
@@ -88,6 +90,7 @@ export const getBillStatusIcon = (status: string): string => {
     case 'PAID': return 'check_circle'
     case 'UNPAID': return 'pending_actions'
     case 'OVERDUE': return 'alarm_off'
+    case 'CANCELLED': return 'cancel'
     default: return 'help'
   }
 }
