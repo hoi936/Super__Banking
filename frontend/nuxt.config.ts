@@ -1,3 +1,5 @@
+import { quasar, transformAssetUrls } from '@quasar/vite-plugin'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -5,11 +7,30 @@ export default defineNuxtConfig({
 
   ssr: false,
 
+  modules: [
+    '@pinia/nuxt'
+  ],
+
   css: [
     'quasar/dist/quasar.css',
     '@quasar/extras/material-icons/material-icons.css',
     '@quasar/extras/roboto-font/roboto-font.css'
   ],
+
+  build: {
+    transpile: ['quasar']
+  },
+
+  vite: {
+    vue: {
+      template: { transformAssetUrls }
+    },
+    plugins: [
+      quasar({
+        sassVariables: false
+      })
+    ]
+  },
 
   runtimeConfig: {
     public: {
@@ -19,13 +40,13 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'LocalLink — Regional Banking & Local Services Platform',
+      title: 'InterLink Banking — Connected Regional Banking & Local Services Platform',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         {
           name: 'description',
-          content: 'LocalLink: Cloud-native Regional Banking & Local Services Platform built with ASP.NET Core, Nuxt, and SQL Server.'
+          content: 'InterLink Banking: Cloud-native Connected Regional Banking & Local Services Platform built with ASP.NET Core, Nuxt, and SQL Server.'
         }
       ],
       link: [

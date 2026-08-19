@@ -1,6 +1,6 @@
-# 🛠️ LocalLink — Tech Stack & Tooling Guide
+# 🛠️ InterLink Banking — Tech Stack & Tooling Guide
 
-Tài liệu chi tiết về toàn bộ **ngôn ngữ lập trình, framework, cơ sở dữ liệu, thư viện và bộ công cụ DevOps** được áp dụng trong dự án **LocalLink (Cloud-native Regional Banking & Local Services Platform)**.
+Tài liệu chi tiết về toàn bộ **ngôn ngữ lập trình, framework, cơ sở dữ liệu, thư viện và bộ công cụ DevOps** được áp dụng trong dự án **InterLink Banking (Cloud-native Connected Regional Banking & Local Services Platform)**.
 
 ---
 
